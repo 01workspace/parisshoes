@@ -1,0 +1,2856 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Paris Shoes — Everyday Sneakers, Runners & Trail Shoes</title>
+    
+    <style>
+      /* Generated using AppDeploy UI skill */
+      :root {
+        --paper: #f5f3ee;
+        --paper-2: #e9e7df;
+        --ink: #171816;
+        --muted: #77786f;
+        --line: #d8d6ce;
+        --tomato: #ef4b32;
+        --olive: #777b54;
+        --white: #fffefa;
+        --font-display: 'Avenir Next', 'Segoe UI', 'Trebuchet MS', sans-serif;
+        --font-body: 'Avenir Next', 'Segoe UI', sans-serif;
+        --page-gutter: clamp(20px, 5vw, 76px);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--font-body);
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      .announcement {
+        background: var(--ink);
+        color: white;
+        text-align: center;
+        padding: 9px;
+        font-size: 10px;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+      }
+      .header {
+        height: 78px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 var(--page-gutter);
+        border-bottom: 1px solid var(--line);
+        position: sticky;
+        top: 0;
+        background: var(--paper);
+        z-index: 9;
+      }
+      .brand {
+        font: 800 34px var(--font-display);
+        letter-spacing: -0.09em;
+      }
+      .nav,
+      .actions {
+        display: flex;
+        gap: 26px;
+        align-items: center;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+      .nav a:hover,
+      .actions a:hover {
+        color: var(--tomato);
+      }
+      .menu {
+        display: none;
+      }
+      .hero {
+        min-height: 620px;
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 4vw;
+        padding: 50px var(--page-gutter);
+      }
+      .hero-copy {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+      }
+      .eyebrow {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: var(--muted);
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: var(--font-display);
+        letter-spacing: -0.07em;
+      }
+      h1 {
+        font-size: clamp(65px, 9vw, 130px);
+        line-height: 0.83;
+        margin: 24px 0;
+      }
+      .hero h1 em {
+        color: var(--tomato);
+        font-style: normal;
+      }
+      .hero p,
+      .copy p {
+        max-width: 350px;
+        line-height: 1.7;
+        color: #5f6058;
+        font-size: 14px;
+      }
+      .btn {
+        display: inline-block;
+        background: var(--ink);
+        color: white;
+        padding: 16px 22px;
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        border: 1px solid var(--ink);
+        margin-top: 18px;
+      }
+      .btn:hover {
+        background: var(--tomato);
+        border-color: var(--tomato);
+      }
+      .visual {
+        background: #d9d7ce;
+        display: grid;
+        place-items: center;
+        position: relative;
+        overflow: hidden;
+        min-height: 500px;
+      }
+      .visual:before {
+        content: '';
+        position: absolute;
+        inset: 9%;
+        border: 1px solid #ffffff88;
+        border-radius: 50%;
+        transform: scaleX(1.25);
+      }
+      .visual img {
+        width: 100%;
+        max-height: 490px;
+        object-fit: contain;
+        mix-blend-mode: multiply;
+        filter: drop-shadow(0 25px 18px #3333);
+        animation: float 5s ease-in-out infinite;
+      }
+      @keyframes float {
+        50% {
+          transform: translateY(-12px) rotate(-4deg);
+        }
+      }
+      .shoe-slider { position: relative; width: 100%; min-height: 500px; display: grid; place-items: center; isolation: isolate; touch-action: pan-y; user-select: none; cursor: grab; }
+      .shoe-slide { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; transform: translateX(8%) scale(.96); transition: opacity .65s ease, transform .75s cubic-bezier(.2,.75,.25,1); pointer-events: none; }
+      .shoe-slide.active { opacity: 1; transform: translateX(0) scale(1); pointer-events: auto; }
+      .shoe-slide img { width: 100%; max-height: 490px; object-fit: contain; mix-blend-mode: multiply; filter: drop-shadow(0 25px 18px #3333); animation: shoeFloat 5s ease-in-out infinite; }
+      @keyframes shoeFloat { 50% { transform: translateY(-10px) rotate(-3deg); } }
+      .shoe-caption { position: absolute; left: 22px; bottom: 22px; z-index: 2; background: var(--paper); padding: 9px 12px; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; }
+      .shoe-controls { position: absolute; right: 22px; bottom: 22px; z-index: 3; display: flex; align-items: center; gap: 8px; }
+      .shoe-controls button { width: 34px; height: 34px; border: 1px solid #17181666; border-radius: 50%; background: #f5f3eee8; color: var(--ink); }
+      .shoe-dots { display: flex; gap: 5px; margin: 0 4px; }
+      .shoe-dots button { width: 7px; height: 7px; padding: 0; border: 0; background: #17181655; }
+      .shoe-dots button[aria-current="true"] { background: var(--tomato); transform: scale(1.35); }
+      @media (prefers-reduced-motion: reduce) { .shoe-slide { transition: none; } .shoe-slide img { animation: none; } }
+      /* Campaign homepage: immersive product motion */
+      .campaign-hero {
+        position: relative;
+        min-height: min(790px, calc(100svh - 110px));
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: .82fr 1.18fr;
+        align-items: center;
+        gap: 1vw;
+        padding: clamp(34px, 5vw, 76px) var(--page-gutter);
+        color: #f8f5ed;
+        background:
+          radial-gradient(ellipse at 70% 48%, #8d4938 0%, transparent 36%),
+          radial-gradient(ellipse at 15% 90%, #6a463b 0%, transparent 38%),
+          linear-gradient(125deg, #1a1c1a 0%, #292a25 55%, #34312b 100%);
+        isolation: isolate;
+      }
+      .campaign-hero:before,
+      .campaign-hero:after {
+        content: '';
+        position: absolute;
+        pointer-events: none;
+        z-index: -1;
+      }
+      .campaign-hero:before {
+        width: min(72vw, 900px);
+        aspect-ratio: 1;
+        border: 1px solid #ffffff18;
+        border-radius: 50%;
+        right: -8%;
+        top: 50%;
+        transform: translateY(-50%);
+        box-shadow: 0 0 0 55px #ffffff08, 0 0 0 110px #ffffff05;
+        animation: orbitSlow 34s linear infinite;
+      }
+      .campaign-hero:after {
+        inset: 0;
+        opacity: .13;
+        background-image: radial-gradient(#fff 0.65px, transparent .65px);
+        background-size: 7px 7px;
+        mask-image: linear-gradient(90deg, transparent, black 55%, transparent);
+      }
+      @keyframes orbitSlow { to { transform: translateY(-50%) rotate(360deg); } }
+      .campaign-copy {
+        position: relative;
+        z-index: 3;
+        max-width: 510px;
+        padding: 20px 0 70px;
+      }
+      .campaign-copy .eyebrow { color: #d7b7a8; }
+      .campaign-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 24px;
+        color: #e7d9c9;
+        font-size: 10px;
+        letter-spacing: .2em;
+        text-transform: uppercase;
+        animation: riseIn .8s .1s both;
+      }
+      .campaign-kicker:before { content: ''; width: 28px; height: 1px; background: var(--tomato); }
+      .campaign-copy h1 {
+        max-width: 620px;
+        margin: 0;
+        font-size: clamp(68px, 9vw, 138px);
+        line-height: .78;
+        letter-spacing: -.095em;
+        animation: riseIn .9s .2s both;
+      }
+      .campaign-copy h1 em {
+        display: inline-block;
+        color: #f06a4e;
+        font-style: normal;
+        font-weight: 600;
+        padding-left: .42em;
+      }
+      .campaign-copy p {
+        max-width: 330px;
+        margin: 30px 0 22px;
+        color: #c6c2b8;
+        font-size: 14px;
+        line-height: 1.8;
+        animation: riseIn .9s .35s both;
+      }
+      .campaign-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 22px;
+        padding: 15px 19px;
+        color: #191a17;
+        background: #f5f1e8;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: .15em;
+        text-transform: uppercase;
+        transition: background .3s, transform .3s;
+        animation: riseIn .9s .48s both;
+      }
+      .campaign-cta:hover { background: #f06a4e; transform: translateY(-4px); }
+      .campaign-cta span { font-size: 17px; transition: transform .3s; }
+      .campaign-cta:hover span { transform: translateX(5px); }
+      .campaign-note {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        display: flex;
+        gap: 22px;
+        align-items: center;
+        color: #aaa69d;
+        font-size: 9px;
+        letter-spacing: .16em;
+        text-transform: uppercase;
+        animation: riseIn 1s .6s both;
+      }
+      .campaign-note b { color: #f06a4e; font-weight: 500; }
+      .campaign-art {
+        min-width: 0;
+        position: relative;
+        min-height: 600px;
+        display: grid;
+        place-items: center;
+        perspective: 1100px;
+      }
+      .campaign-art:before {
+        content: '';
+        position: absolute;
+        width: min(43vw, 570px);
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: radial-gradient(circle, #e9a08035 0%, #e9a08012 48%, transparent 70%);
+        animation: pulseGlow 5s ease-in-out infinite;
+      }
+      @keyframes pulseGlow { 50% { transform: scale(1.13); opacity: .65; } }
+      .campaign-ring {
+        position: absolute;
+        width: min(46vw, 610px);
+        aspect-ratio: 1;
+        border: 1px solid #ffffff20;
+        border-radius: 50%;
+        transform: rotateX(68deg) rotate(-18deg);
+        animation: ringDrift 12s ease-in-out infinite;
+      }
+      .campaign-ring:after {
+        content: '';
+        position: absolute;
+        width: 11px;
+        height: 11px;
+        top: 12%;
+        left: 17%;
+        border-radius: 50%;
+        background: #f06a4e;
+        box-shadow: 0 0 22px #f06a4e;
+      }
+      @keyframes ringDrift { 50% { transform: rotateX(68deg) rotate(4deg) scale(1.06); } }
+      .campaign-stage {
+        width: 100%;
+        min-height: 560px;
+        position: relative;
+        display: grid;
+        place-items: center;
+        touch-action: pan-y;
+        user-select: none;
+        cursor: grab;
+      }
+      .campaign-stage .shoe-slide {
+        inset: 4% 0 8%;
+        transform: translate3d(12%, 0, -80px) rotateY(-14deg) scale(.82);
+        transition: opacity .8s ease, transform 1.05s cubic-bezier(.2,.8,.2,1);
+      }
+      .campaign-stage .shoe-slide.active {
+        transform: translate3d(0, -2%, 0) rotateY(0) scale(1);
+      }
+      .campaign-stage .shoe-slide img {
+        width: 108%;
+        max-height: 530px;
+        object-fit: contain;
+        mix-blend-mode: normal;
+        filter: drop-shadow(0 20px 15px #0006) saturate(.96) contrast(1.02);
+        animation: shoeHover 6s ease-in-out infinite;
+      }
+      @keyframes shoeHover {
+        0%, 100% { transform: translate3d(0, 0, 0) rotate(-7deg); }
+        50% { transform: translate3d(0, -18px, 0) rotate(-2deg); }
+      }
+      .campaign-stage .shoe-caption {
+        left: 8%;
+        bottom: 5%;
+        color: #f8f5ed;
+        background: #191a17c9;
+        border: 1px solid #ffffff26;
+        backdrop-filter: blur(12px);
+        padding: 11px 14px;
+        font-size: 9px;
+        letter-spacing: .17em;
+      }
+      .campaign-stage .shoe-controls {
+        right: 5%;
+        bottom: 4%;
+        gap: 10px;
+      }
+      .campaign-stage .shoe-controls button {
+        width: 42px;
+        height: 42px;
+        border-color: #ffffff55;
+        background: #191a17a8;
+        color: #fff;
+        backdrop-filter: blur(10px);
+        transition: background .25s, transform .25s;
+      }
+      .campaign-stage .shoe-controls button:hover { background: var(--tomato); transform: scale(1.08); }
+      .campaign-stage .shoe-dots button { background: #ffffff55; }
+      .campaign-stage .shoe-dots button[aria-current="true"] { background: #f06a4e; }
+      .campaign-index {
+        position: absolute;
+        right: 5%;
+        top: 7%;
+        color: #e9d8ca;
+        font: 500 11px var(--font-body);
+        letter-spacing: .2em;
+      }
+      .campaign-index strong { color: #f06a4e; font-size: 20px; }
+      .campaign-scroll {
+        position: absolute;
+        right: var(--page-gutter);
+        bottom: 26px;
+        writing-mode: vertical-rl;
+        color: #aaa69d;
+        font-size: 9px;
+        letter-spacing: .2em;
+        text-transform: uppercase;
+      }
+      .motion-ticker {
+        overflow: hidden;
+        white-space: nowrap;
+        padding: 18px 0;
+        background: var(--tomato);
+        color: white;
+      }
+      .motion-ticker-track {
+        display: inline-flex;
+        min-width: max-content;
+        gap: 32px;
+        animation: tickerTravel 28s linear infinite;
+        font: 700 17px var(--font-display);
+        letter-spacing: .12em;
+      }
+      .motion-ticker-track span:after { content: '✳'; padding-left: 32px; color: #ffd1c5; }
+      @keyframes tickerTravel { to { transform: translateX(-50%); } }
+      .home-featured .product,
+      .home-categories .category,
+      .home-story,
+      .home-quote {
+        opacity: 0;
+        transform: translateY(28px);
+        transition: opacity .7s ease, transform .8s cubic-bezier(.2,.75,.25,1);
+      }
+      .home-featured.is-visible .product,
+      .home-categories.is-visible .category,
+      .home-story.is-visible,
+      .home-quote.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .home-featured .product:nth-child(2),
+      .home-categories .category:nth-child(2) { transition-delay: .12s; }
+      .home-featured .product:nth-child(3),
+      .home-categories .category:nth-child(3) { transition-delay: .22s; }
+      .home-featured .product:nth-child(4) { transition-delay: .32s; }
+      .home-categories .category:nth-child(1) { transition-delay: .04s; }
+      .home-categories .category:nth-child(3) { transition-delay: .2s; }
+      .home-featured .product-img img,
+      .home-categories .category img { transition: transform .9s cubic-bezier(.2,.7,.2,1); }
+      .home-featured .product:hover .product-img img { transform: scale(1.08) rotate(-2deg); }
+      .home-categories .category:hover img { transform: scale(1.07); }
+      .home-featured .product-img { background: #e4dfd4; }
+      .home-categories .category { min-height: 390px; background: #d4c9bb; }
+      .home-categories .category b {
+        color: white;
+        text-shadow: 0 2px 18px #0008;
+        font-size: clamp(30px, 4vw, 48px);
+      }
+      .home-story {
+        overflow: hidden;
+        background: #e6e0d6;
+      }
+      .home-story img { transition: transform 1.2s ease; }
+      .home-story:hover img { transform: scale(1.035); }
+      .home-quote { background: #272b25; }
+      .home-quote blockquote { color: #f2eee5; }
+      @keyframes riseIn {
+        from { opacity: 0; transform: translateY(24px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @media (max-width: 900px) {
+        .campaign-hero { grid-template-columns: 1fr 1.05fr; min-height: 650px; }
+        .campaign-art, .campaign-stage { min-height: 480px; }
+        .campaign-copy h1 { font-size: clamp(64px, 10vw, 100px); }
+        .campaign-stage .shoe-slide img { max-height: 440px; }
+      }
+      @media (max-width: 640px) {
+        .campaign-hero {
+          display: flex;
+          flex-direction: column;
+          align-items: stretch;
+          gap: 0;
+          min-height: 0;
+          padding: 44px 18px 28px;
+        }
+        .campaign-copy { padding: 0 3px; }
+        .campaign-copy h1 { font-size: clamp(68px, 18vw, 100px); }
+        .campaign-copy p { margin: 20px 0 16px; max-width: 290px; font-size: 13px; }
+        .campaign-cta { padding: 13px 16px; }
+        .campaign-art { min-height: 370px; margin-top: -8px; }
+        .campaign-stage { min-height: 370px; }
+        .campaign-stage .shoe-slide { inset: 0 0 6%; }
+        .campaign-stage .shoe-slide img { width: 115%; max-height: 340px; }
+        .campaign-ring { width: 84vw; }
+        .campaign-art:before { width: 78vw; }
+        .campaign-stage .shoe-caption { left: 1%; bottom: 1%; font-size: 8px; }
+        .campaign-stage .shoe-controls { right: 1%; bottom: 0; gap: 5px; }
+        .campaign-stage .shoe-controls button { width: 34px; height: 34px; }
+        .campaign-index { top: 1%; right: 2%; }
+        .campaign-note { position: static; margin-top: 22px; font-size: 8px; }
+        .campaign-scroll { display: none; }
+        .home-categories .category { min-height: 270px; }
+        .motion-ticker { padding: 14px 0; }
+        .motion-ticker-track { font-size: 14px; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .campaign-hero:before, .campaign-ring, .campaign-art:before,
+        .campaign-stage .shoe-slide img, .motion-ticker-track {
+          animation: none !important;
+        }
+        .campaign-copy > *, .home-featured .product, .home-categories .category,
+        .home-story, .home-quote { animation: none !important; transition: none !important; opacity: 1; transform: none; }
+      }
+      .ticker {
+        background: var(--tomato);
+        color: white;
+        padding: 15px;
+        overflow: hidden;
+        white-space: nowrap;
+        font: 700 15px var(--font-display);
+        letter-spacing: 0.1em;
+      }
+      .section {
+        padding: 85px var(--page-gutter);
+      }
+      .head {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        margin-bottom: 28px;
+      }
+      .head h2,
+      .page-title {
+        font-size: clamp(40px, 5vw, 68px);
+        line-height: 0.92;
+        margin: 12px 0;
+      }
+      .link {
+        border-bottom: 1px solid;
+        padding-bottom: 5px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+      .products {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+      }
+      .product-img {
+        aspect-ratio: 0.82;
+        background: var(--paper-2);
+        position: relative;
+        overflow: hidden;
+      }
+      .product-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        mix-blend-mode: multiply;
+        transition: 0.5s;
+      }
+      .product:hover img {
+        transform: scale(1.05);
+      }
+      .heart {
+        position: absolute;
+        right: 12px;
+        top: 12px;
+        border: 0;
+        border-radius: 50%;
+        background: #fffe;
+        padding: 9px;
+        font-size: 18px;
+      }
+      .heart.on {
+        color: var(--tomato);
+      }
+      .meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 13px 0;
+        font-size: 12px;
+      }
+      .meta small {
+        display: block;
+        color: var(--muted);
+        margin-top: 5px;
+      }
+      .categories {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+      }
+      .category {
+        min-height: 340px;
+        background: #d9d7ce;
+        position: relative;
+        display: flex;
+        align-items: end;
+        padding: 25px;
+        overflow: hidden;
+      }
+      .category img {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        inset: 0;
+        object-fit: cover;
+        mix-blend-mode: multiply;
+      }
+      .category b {
+        position: relative;
+        font: 700 36px var(--font-display);
+      }
+      .story {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        background: #dedbd1;
+      }
+      .story img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        min-height: 400px;
+      }
+      .copy {
+        padding: clamp(35px, 6vw, 90px);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+      }
+      .copy h2 {
+        font-size: clamp(42px, 5vw, 70px);
+        line-height: 0.9;
+        margin: 20px 0;
+      }
+      .quote {
+        background: var(--olive);
+        color: white;
+        text-align: center;
+        padding: 95px 20px;
+      }
+      .quote blockquote {
+        font: 600 clamp(28px, 4vw, 54px)/1.1 var(--font-display);
+        max-width: 850px;
+        margin: 20px auto;
+      }
+      .page {
+        padding: 60px var(--page-gutter) 100px;
+        min-height: 55vh;
+      }
+      .intro {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        margin-bottom: 40px;
+      }
+      .intro p {
+        max-width: 360px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.7;
+      }
+      .shop {
+        display: grid;
+        grid-template-columns: 180px 1fr;
+        gap: 35px;
+      }
+      .filters {
+        border-top: 1px solid var(--line);
+        padding-top: 15px;
+      }
+      .filters label {
+        display: block;
+        margin: 12px 0;
+        font-size: 12px;
+      }
+      .toolbar {
+        display: flex;
+        justify-content: space-between;
+        padding-bottom: 15px;
+        border-bottom: 1px solid var(--line);
+        margin-bottom: 18px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+      .toolbar select,
+      .form input,
+      .form select {
+        background: transparent;
+        border: 1px solid var(--line);
+        padding: 12px;
+      }
+      .detail {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 6vw;
+        padding: 50px var(--page-gutter);
+      }
+      .detail > img {
+        width: 100%;
+        background: var(--paper-2);
+        mix-blend-mode: multiply;
+      }
+      .detail-info {
+        padding: 35px 0;
+        max-width: 460px;
+      }
+      .detail-info h1 {
+        font-size: clamp(42px, 5vw, 70px);
+      }
+      .detail-info p {
+        font-size: 13px;
+        line-height: 1.7;
+        color: var(--muted);
+      }
+      .sizes {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+        margin: 15px 0;
+      }
+      .size {
+        padding: 13px 5px;
+        background: transparent;
+        border: 1px solid var(--line);
+      }
+      .size.sel {
+        background: var(--ink);
+        color: white;
+      }
+      .detail-info .btn {
+        width: 100%;
+        text-align: center;
+      }
+      .bagrow {
+        display: grid;
+        grid-template-columns: 110px 1fr auto;
+        gap: 20px;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+        align-items: center;
+      }
+      .bagrow img {
+        width: 110px;
+        background: var(--paper-2);
+      }
+      .qty button {
+        background: transparent;
+        border: 1px solid var(--line);
+        padding: 5px 10px;
+      }
+      .summary {
+        max-width: 420px;
+        margin: 35px 0 0 auto;
+        border-top: 1px solid;
+        padding-top: 18px;
+      }
+      .summary div {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+      }
+      .summary .btn {
+        width: 100%;
+        text-align: center;
+      }
+      .form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        max-width: 650px;
+      }
+      .form input,
+      .form select {
+        width: 100%;
+      }
+      .wide {
+        grid-column: 1/-1;
+      }
+      .info {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 28px;
+        margin-top: 45px;
+      }
+      .info article {
+        border-top: 1px solid var(--line);
+        padding-top: 15px;
+      }
+      .info h3 {
+        font-size: 23px;
+      }
+      .info p {
+        font-size: 13px;
+        line-height: 1.7;
+        color: var(--muted);
+      }
+      .footer {
+        background: var(--ink);
+        color: var(--paper);
+        padding: 60px var(--page-gutter) 25px;
+      }
+      .footgrid {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+        gap: 35px;
+        padding-bottom: 55px;
+      }
+      .footer p,
+      .footer a {
+        color: #b4b3aa;
+        font-size: 12px;
+        line-height: 1.8;
+      }
+      .footer a {
+        display: block;
+      }
+      .footer h4 {
+        font-size: 10px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+      }
+      .newsletter {
+        display: flex;
+        border-bottom: 1px solid #777;
+      }
+      .newsletter input {
+        min-width: 0;
+        flex: 1;
+        background: transparent;
+        border: 0;
+        color: white;
+        padding: 12px 0;
+      }
+      .newsletter button {
+        background: none;
+        border: 0;
+        color: white;
+      }
+      .footbottom {
+        border-top: 1px solid #444;
+        padding-top: 20px;
+        display: flex;
+        justify-content: space-between;
+        color: #888;
+        font-size: 10px;
+        text-transform: uppercase;
+      }
+      .notice {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--ink);
+        color: white;
+        padding: 13px 20px;
+        z-index: 20;
+        opacity: 0;
+        transition: 0.2s;
+      }
+      .notice.show {
+        opacity: 1;
+      }
+      .empty {
+        border: 1px dashed var(--line);
+        padding: 55px;
+        text-align: center;
+        color: var(--muted);
+      }
+      @media (max-width: 900px) {
+        .products {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .hero {
+          min-height: 0;
+        }
+        .visual {
+          min-height: 420px;
+        }
+        .footgrid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .category {
+          min-height: 260px;
+        }
+      }
+      @media (max-width: 640px) {
+        .header {
+          height: 66px;
+        }
+        .menu {
+          display: block;
+          border: 0;
+          background: none;
+          font-size: 20px;
+        }
+        .nav {
+          display: none;
+          position: absolute;
+          top: 66px;
+          left: 0;
+          right: 0;
+          background: var(--paper);
+          padding: 24px var(--page-gutter);
+          flex-direction: column;
+          align-items: flex-start;
+          border-bottom: 1px solid var(--line);
+        }
+        .nav.open {
+          display: flex;
+        }
+        .actions {
+          gap: 12px;
+        }
+        .actions .label {
+          display: none;
+        }
+        .brand {
+          font-size: 30px;
+        }
+        .hero {
+          display: flex;
+          flex-direction: column;
+          padding-top: 30px;
+        }
+        .hero h1 {
+          font-size: clamp(65px, 18vw, 100px);
+        }
+        .visual { min-height: 320px; }
+        .shoe-slider { min-height: 320px; }
+        .shoe-slide img { max-height: 310px; }
+        .shoe-caption { left: 12px; bottom: 12px; font-size: 9px; }
+        .shoe-controls { right: 12px; bottom: 12px; gap: 5px; }
+        .shoe-controls button { width: 30px; height: 30px; }
+        .section {
+          padding: 60px var(--page-gutter);
+        }
+        .head,
+        .intro {
+          display: block;
+        }
+        .categories,
+        .story,
+        .detail {
+          grid-template-columns: 1fr;
+        }
+        .category {
+          min-height: 300px;
+        }
+        .shop {
+          grid-template-columns: 1fr;
+        }
+        .filters {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+        }
+        .page {
+          padding-top: 38px;
+        }
+        .page-title {
+          font-size: 48px;
+        }
+        .detail > img {
+          max-height: 420px;
+          object-fit: cover;
+        }
+        .form,
+        .info {
+          grid-template-columns: 1fr;
+        }
+        .wide {
+          grid-column: auto;
+        }
+        .footgrid {
+          grid-template-columns: 1fr 1fr;
+          gap: 22px 16px;
+        }
+        .footgrid > div:first-child,
+        .footgrid > div:last-child {
+          grid-column: 1/-1;
+        }
+        .footbottom {
+          flex-direction: column;
+          gap: 9px;
+        }
+        .bagrow {
+          grid-template-columns: 85px 1fr;
+        }
+        .bagrow img {
+          width: 85px;
+        }
+        .bagrow .rowprice {
+          grid-column: 2;
+        }
+      }
+      /* Final image-fit correction: preserve the complete shoe silhouette */
+      .campaign-art {
+        min-height: 540px !important;
+        overflow: visible;
+      }
+      .campaign-stage {
+        min-height: 540px !important;
+        height: 540px;
+        overflow: hidden;
+        padding: 28px 16px 88px;
+      }
+      .campaign-stage .shoe-slide {
+        inset: 18px 5% 88px !important;
+        padding: 0;
+        overflow: visible;
+      }
+      .campaign-stage .shoe-slide img {
+        display: block;
+        width: min(88%, 470px) !important;
+        height: 100%;
+        max-height: 390px !important;
+        object-fit: contain !important;
+        object-position: center center !important;
+        transform-origin: center center;
+        filter: drop-shadow(0 18px 14px rgba(40,34,26,.18)) !important;
+      }
+      .campaign-stage .shoe-slide.active img {
+        transform: translateY(-2px) rotate(-2deg);
+      }
+      .campaign-stage .shoe-caption {
+        left: 12px !important;
+        bottom: 18px !important;
+        max-width: calc(100% - 150px);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        z-index: 4;
+      }
+      .campaign-stage .shoe-controls {
+        right: 12px !important;
+        bottom: 16px !important;
+        display: flex;
+        align-items: center;
+        gap: 8px !important;
+        z-index: 5;
+      }
+      .campaign-stage .shoe-controls > button {
+        width: 38px !important;
+        height: 38px !important;
+        min-width: 38px;
+        padding: 0;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font-size: 18px;
+        line-height: 1;
+      }
+      .campaign-stage .shoe-dots {
+        display: flex;
+        align-items: center;
+        gap: 7px !important;
+        margin: 0 2px;
+      }
+      .campaign-stage .shoe-dots button {
+        width: 9px !important;
+        height: 9px !important;
+        min-width: 9px;
+        min-height: 9px;
+        padding: 0 !important;
+        border-radius: 50% !important;
+        border: 1px solid #77736b !important;
+        background: transparent !important;
+        box-shadow: none !important;
+      }
+      .campaign-stage .shoe-dots button[aria-current="true"] {
+        width: 11px !important;
+        height: 11px !important;
+        min-width: 11px;
+        min-height: 11px;
+        background: var(--ink) !important;
+        border-color: var(--ink) !important;
+      }
+      .product-img {
+        overflow: hidden !important;
+        padding: 12px;
+      }
+      .product-img img {
+        width: 100% !important;
+        height: 100% !important;
+        max-width: 100%;
+        max-height: 100%;
+        padding: 5% !important;
+        object-fit: contain !important;
+        object-position: center !important;
+      }
+      .detail > img, .bagrow img {
+        max-width: 100%;
+        object-fit: contain !important;
+        object-position: center !important;
+      }
+      @media (max-width: 640px) {
+        .campaign-hero {
+          min-height: auto !important;
+          grid-template-columns: 1fr !important;
+          gap: 0 !important;
+          padding: 38px 18px 28px !important;
+          overflow: hidden;
+        }
+        .campaign-copy {
+          padding: 10px 0 0 !important;
+          max-width: none;
+        }
+        .campaign-copy h1 {
+          font-size: clamp(54px, 15vw, 78px) !important;
+          line-height: .86;
+        }
+        .campaign-copy p { max-width: 310px; }
+        .campaign-note { display: none !important; }
+        .campaign-art {
+          min-height: 410px !important;
+          height: 410px;
+          margin: 0 !important;
+          overflow: visible;
+        }
+        .campaign-stage {
+          min-height: 410px !important;
+          height: 410px;
+          padding: 14px 8px 78px;
+          overflow: hidden;
+        }
+        .campaign-stage .shoe-slide {
+          inset: 8px 2% 76px !important;
+        }
+        .campaign-stage .shoe-slide img {
+          width: min(88%, 340px) !important;
+          max-height: 300px !important;
+          height: 100%;
+          object-fit: contain !important;
+        }
+        .campaign-stage .shoe-caption {
+          left: 8px !important;
+          bottom: 12px !important;
+          max-width: calc(100% - 138px);
+          padding: 8px 9px;
+          font-size: 8px;
+        }
+        .campaign-stage .shoe-controls {
+          right: 8px !important;
+          bottom: 10px !important;
+          gap: 6px !important;
+        }
+        .campaign-stage .shoe-controls > button {
+          width: 34px !important;
+          height: 34px !important;
+          min-width: 34px;
+          font-size: 16px;
+        }
+        .campaign-stage .shoe-dots { gap: 5px !important; }
+        .campaign-stage .shoe-dots button {
+          width: 7px !important;
+          height: 7px !important;
+          min-width: 7px;
+          min-height: 7px;
+        }
+        .campaign-stage .shoe-dots button[aria-current="true"] {
+          width: 9px !important;
+          height: 9px !important;
+          min-width: 9px;
+          min-height: 9px;
+        }
+      }
+
+      /* Paris Shoes unified visual system */
+      :root { --paper:#f3f0e9; --paper-2:#f3f0e9; --ink:#24231f; --muted:#77736b; --line:#d9d4ca; --tomato:#8b7962; --olive:#8b7962; --white:#fffdf8; }
+      html,body,#app,main,.home-page,.page,.section,.hero,.detail,.story,.copy,.intro,.shop,.announcement,.header,.nav,.visual,.campaign-hero,.campaign-art,.campaign-stage,.motion-ticker,.ticker,.home-featured,.home-categories,.home-story,.home-quote,.product-img,.category,.quote,.footer { background-color:var(--paper)!important; color:var(--ink); }
+      body { background:var(--paper)!important; }
+      .announcement { color:var(--ink)!important; border-bottom:1px solid var(--line); font-weight:600; }
+      .header { border-bottom:1px solid var(--line); box-shadow:none; }
+      .brand { color:var(--ink)!important; font:700 24px/1 var(--font-display)!important; letter-spacing:-.045em!important; text-transform:uppercase; white-space:nowrap; }
+      .nav,.actions { gap:clamp(14px,2vw,28px); }
+      .nav a,.actions a,.link { color:var(--ink); }
+      .campaign-hero { color:var(--ink)!important; background:var(--paper)!important; min-height:min(720px,calc(100svh - 100px)); grid-template-columns:.9fr 1.1fr; }
+      .campaign-hero:before,.campaign-art:before { display:none!important; }
+      .campaign-copy .eyebrow,.campaign-copy .campaign-kicker,.campaign-note,.campaign-scroll,.campaign-index { color:var(--muted)!important; }
+      .campaign-copy h1 { color:var(--ink); }
+      .campaign-copy h1 em,.campaign-note b,.campaign-index strong { color:#8b7962!important; }
+      .campaign-copy p { color:#666158!important; }
+      .campaign-cta,.btn { background:var(--ink)!important; color:var(--paper)!important; border:1px solid var(--ink)!important; border-radius:2px; box-shadow:none; }
+      .campaign-cta:hover,.btn:hover { background:#5d554a!important; border-color:#5d554a!important; color:white!important; }
+      .campaign-art,.campaign-stage { min-height:470px; }
+      .campaign-ring { border-color:#b9b1a4!important; box-shadow:0 0 0 55px #8b79620a,0 0 0 110px #8b796208!important; }
+      .campaign-stage .shoe-slide img,.shoe-slide img,.visual img { mix-blend-mode:normal!important; object-fit:contain!important; filter:drop-shadow(0 24px 18px rgba(40,34,26,.19))!important; }
+      .campaign-stage .shoe-caption { background:var(--paper)!important; color:var(--ink)!important; border:1px solid var(--line); }
+      .campaign-stage .shoe-controls button,.shoe-controls button { background:var(--paper)!important; color:var(--ink)!important; border:1px solid var(--line)!important; }
+      .campaign-stage .shoe-dots button[aria-current="true"],.shoe-dots button[aria-current="true"] { background:var(--ink)!important; }
+      .motion-ticker,.ticker { background:var(--paper)!important; color:var(--ink)!important; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+      .motion-ticker-track span:after { color:#8b7962!important; }
+      .section { padding-top:clamp(56px,7vw,88px); padding-bottom:clamp(56px,7vw,88px); }
+      .head { align-items:end; gap:24px; }
+      .head h2,.page-title,.copy h2 { color:var(--ink); }
+      .products { gap:clamp(12px,1.5vw,22px); }
+      .product-img { aspect-ratio:1/1; display:grid; place-items:center; overflow:visible; border:1px solid var(--line); }
+      .product-img a { width:100%; height:100%; display:grid; place-items:center; }
+      .product-img img { width:100%; height:100%; padding:9%; object-fit:contain!important; mix-blend-mode:normal!important; filter:drop-shadow(0 18px 13px rgba(40,34,26,.2)); }
+      .product:hover .product-img img { transform:translateY(-5px) scale(1.035); }
+      .heart { background:var(--paper)!important; color:var(--ink); border:1px solid var(--line); }
+      .category { min-height:340px; border:1px solid var(--line); align-items:center; justify-content:center; padding:18px; }
+      .category img { position:relative!important; inset:auto!important; width:100%!important; height:78%!important; object-fit:contain!important; mix-blend-mode:normal!important; filter:drop-shadow(0 18px 14px rgba(40,34,26,.18)); }
+      .category b { position:absolute!important; left:22px; bottom:18px; color:var(--ink)!important; text-shadow:none!important; font:600 22px var(--font-display)!important; }
+      .story,.home-story { border:1px solid var(--line); }
+      .quote,.home-quote { background:var(--paper)!important; color:var(--ink)!important; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+      .quote blockquote,.home-quote blockquote { color:var(--ink)!important; }
+      .footer { background:var(--paper)!important; color:var(--ink)!important; border-top:1px solid var(--line); }
+      .footer p,.footer a,.footer h4,.footbottom { color:var(--muted)!important; }
+      .footer .brand { color:var(--ink)!important; }
+      .newsletter { border-color:var(--line); }
+      .newsletter input,.newsletter button { color:var(--ink); }
+      .footbottom { border-color:var(--line); }
+      .toolbar,.filters,.info article,.bagrow,.summary { border-color:var(--line); }
+      .detail > img,.bagrow img { background:var(--paper)!important; mix-blend-mode:normal!important; object-fit:contain!important; filter:drop-shadow(0 18px 14px rgba(40,34,26,.18)); }
+      .size.sel { background:var(--ink)!important; color:var(--paper)!important; }
+      .notice { background:var(--ink)!important; color:var(--paper)!important; }
+      @media (max-width:640px) {
+        .campaign-hero { background:var(--paper)!important; }
+        .campaign-art,.campaign-stage { min-height:340px; }
+        .campaign-stage .shoe-slide img { width:100%!important; max-height:320px; }
+        .category { min-height:245px; }
+        .category img { height:72%!important; }
+        .head { align-items:flex-start; }
+        .brand { font-size:21px!important; }
+      }
+
+      /* Mobile polish: balanced masthead, editorial type rhythm and clean hero */
+      @media (max-width: 640px) {
+        .announcement {
+          padding: 8px 18px;
+          font-size: 8px;
+          line-height: 1.45;
+          letter-spacing: .11em;
+          border: 0 !important;
+          white-space: normal;
+          text-wrap: balance;
+        }
+        .header {
+          height: 70px;
+          display: grid;
+          grid-template-columns: 42px minmax(0, 1fr) auto;
+          align-items: center;
+          column-gap: 12px;
+          padding: 0 22px;
+          border-top: 0;
+          border-bottom: 1px solid var(--line);
+        }
+        .header .menu {
+          width: 42px;
+          height: 42px;
+          display: grid;
+          place-items: center;
+          padding: 0;
+          margin: 0;
+          font-size: 21px;
+          line-height: 1;
+        }
+        .header .brand {
+          justify-self: center;
+          font-size: clamp(20px, 5.7vw, 24px) !important;
+          letter-spacing: -.055em !important;
+          line-height: 1;
+          white-space: nowrap;
+        }
+        .header .actions {
+          justify-self: end;
+          display: flex;
+          align-items: center;
+          gap: 15px !important;
+          margin: 0;
+          font-size: 10px;
+          letter-spacing: .09em;
+          white-space: nowrap;
+        }
+        .header .actions a {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 38px;
+          line-height: 1;
+        }
+        .header .actions a:first-child { display: none; }
+        .header .actions a:nth-child(2) { font-size: 17px; }
+        .header .actions a:nth-child(3) { font-size: 10px; }
+        .campaign-hero {
+          min-height: 0 !important;
+          padding: 42px 22px 24px !important;
+          gap: 0 !important;
+          grid-template-columns: minmax(0, 1fr) !important;
+        }
+        .campaign-copy {
+          padding: 0 !important;
+          margin: 0;
+          max-width: 100%;
+        }
+        .campaign-copy .campaign-kicker {
+          display: flex;
+          align-items: center;
+          gap: 9px;
+          margin: 0 0 20px;
+          font-size: 8px;
+          line-height: 1.4;
+          letter-spacing: .16em;
+        }
+        .campaign-copy h1 {
+          margin: 0;
+          font-size: clamp(54px, 14.2vw, 76px) !important;
+          line-height: .91 !important;
+          letter-spacing: -.075em;
+        }
+        .campaign-copy h1 em {
+          display: block;
+          padding-left: .22em !important;
+          margin-top: .015em;
+        }
+        .campaign-copy p {
+          max-width: 330px;
+          margin: 20px 0 18px !important;
+          font-size: 14px;
+          line-height: 1.55 !important;
+          letter-spacing: -.01em;
+        }
+        .campaign-copy .campaign-cta {
+          margin-top: 4px;
+          min-height: 54px;
+          padding: 16px 19px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 18px;
+          font-size: 10px;
+          letter-spacing: .11em;
+        }
+        .campaign-art {
+          min-height: 0 !important;
+          height: auto;
+          margin: 12px -6px 0 !important;
+          overflow: visible;
+        }
+        .campaign-stage {
+          min-height: 340px !important;
+          height: 340px !important;
+          padding: 0 !important;
+          overflow: hidden;
+        }
+        .campaign-stage .shoe-slide {
+          inset: 4px 2% 4px !important;
+        }
+        .campaign-stage .shoe-slide img {
+          width: min(92%, 350px) !important;
+          height: 100%;
+          max-height: 320px !important;
+          object-fit: contain !important;
+          object-position: center;
+        }
+        /* The hero remains automatic and swipeable; remove the extra overlay UI on phones. */
+        .campaign-stage .shoe-caption,
+        .campaign-stage .shoe-controls {
+          display: none !important;
+        }
+        .campaign-index { display: none !important; }
+        .motion-ticker {
+          min-height: 58px;
+          padding: 15px 0;
+        }
+        .section {
+          padding: 54px 22px !important;
+        }
+        .section .eyebrow {
+          font-size: 8px;
+          line-height: 1.45;
+          letter-spacing: .16em;
+        }
+        .section h2,
+        .head h2 {
+          margin: 12px 0 22px;
+          font-size: clamp(34px, 9vw, 44px);
+          line-height: .98;
+          letter-spacing: -.065em;
+        }
+        .head {
+          margin-bottom: 22px;
+          gap: 12px;
+        }
+        .head p,
+        .section p {
+          line-height: 1.55;
+        }
+      }
+
+
+      /* Paris Shoes — final responsive refinement */
+      html,
+      body,
+      #app,
+      .home-page {
+        min-height: 100%;
+        background: var(--paper) !important;
+        background-image: none !important;
+      }
+
+      .announcement {
+        display: none !important;
+      }
+
+      .header {
+        margin: 0;
+        border-top: 0;
+        background: var(--paper) !important;
+      }
+
+      .campaign-hero,
+      .campaign-art,
+      .campaign-stage {
+        background: var(--paper) !important;
+        background-image: none !important;
+      }
+
+      .campaign-hero {
+        min-height: clamp(680px, 84svh, 850px) !important;
+        grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr) !important;
+        gap: clamp(18px, 3vw, 48px) !important;
+        align-items: center;
+        padding: clamp(48px, 6vw, 88px) var(--page-gutter) !important;
+        overflow: hidden;
+      }
+
+      .campaign-hero:before,
+      .campaign-hero:after,
+      .campaign-art:before,
+      .campaign-ring {
+        display: none !important;
+        content: none !important;
+        background: none !important;
+        box-shadow: none !important;
+      }
+
+      .campaign-copy {
+        max-width: 560px;
+        padding: 0 0 22px !important;
+        align-self: center;
+      }
+
+      .campaign-copy .campaign-kicker {
+        margin-bottom: clamp(20px, 2.4vw, 30px);
+        font-size: 9px;
+        letter-spacing: .17em;
+        line-height: 1.5;
+      }
+
+      .campaign-copy h1 {
+        font-size: clamp(74px, 8.7vw, 132px);
+        line-height: .82 !important;
+        letter-spacing: -.085em;
+      }
+
+      .campaign-copy h1 em {
+        padding-left: .24em;
+      }
+
+      .campaign-copy p {
+        max-width: 390px;
+        margin: 28px 0 23px;
+        font-size: 14px;
+        line-height: 1.62;
+        letter-spacing: -.01em;
+      }
+
+      .campaign-copy .campaign-cta {
+        min-height: 54px;
+        padding: 16px 21px;
+        gap: 24px;
+      }
+
+      .campaign-art {
+        min-width: 0;
+        width: 100%;
+        min-height: 650px !important;
+        height: 650px;
+        margin: 0;
+        overflow: visible;
+        align-self: center;
+      }
+
+      .campaign-stage {
+        width: 100%;
+        min-height: 650px !important;
+        height: 650px !important;
+        padding: 0 0 78px !important;
+        overflow: visible;
+        display: grid;
+        place-items: center;
+      }
+
+      .campaign-stage .shoe-slide {
+        inset: 0 0 78px !important;
+        display: grid;
+        place-items: center;
+        overflow: visible;
+      }
+
+      .campaign-stage .shoe-slide:not(.active) {
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        transition: none !important;
+      }
+
+      .campaign-stage .shoe-slide.active {
+        visibility: visible !important;
+        opacity: 1 !important;
+        transition: opacity .42s ease, transform .7s cubic-bezier(.2,.75,.25,1) !important;
+      }
+
+      .campaign-stage .shoe-slide img {
+        width: min(116%, 650px) !important;
+        height: 100%;
+        max-height: 560px !important;
+        object-fit: contain !important;
+        object-position: center !important;
+        filter: drop-shadow(0 26px 19px rgba(40,34,26,.2)) !important;
+      }
+
+      .campaign-stage .shoe-caption {
+        left: 4% !important;
+        bottom: 17px !important;
+        max-width: min(48%, 300px);
+      }
+
+      .campaign-stage .shoe-controls {
+        right: 4% !important;
+        bottom: 15px !important;
+      }
+
+      .motion-ticker {
+        background: var(--paper) !important;
+        color: var(--ink) !important;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .home-featured,
+      .home-categories,
+      .home-story,
+      .home-quote,
+      .footer {
+        background: var(--paper) !important;
+        background-image: none !important;
+      }
+
+      .home-featured .product-img,
+      .home-categories .category,
+      .home-story,
+      .home-quote {
+        background-color: var(--paper) !important;
+      }
+
+      .section {
+        padding-top: clamp(58px, 6.5vw, 86px);
+        padding-bottom: clamp(58px, 6.5vw, 86px);
+      }
+
+      .head {
+        margin-bottom: clamp(22px, 2.8vw, 32px);
+      }
+
+      .head h2 {
+        line-height: .94;
+        letter-spacing: -.07em;
+      }
+
+      .product-img {
+        overflow: hidden !important;
+      }
+
+      .product-img img {
+        object-fit: contain !important;
+        object-position: center !important;
+      }
+
+      @media (min-width: 761px) and (max-width: 1100px) {
+        .campaign-hero {
+          min-height: 700px !important;
+          grid-template-columns: minmax(0, .84fr) minmax(0, 1.16fr) !important;
+          padding-left: 34px !important;
+          padding-right: 34px !important;
+        }
+
+        .campaign-art,
+        .campaign-stage {
+          min-height: 560px !important;
+          height: 560px !important;
+        }
+
+        .campaign-stage .shoe-slide {
+          inset: 0 0 72px !important;
+        }
+
+        .campaign-stage .shoe-slide img {
+          width: min(118%, 540px) !important;
+          max-height: 500px !important;
+        }
+
+        .campaign-copy h1 {
+          font-size: clamp(66px, 8.2vw, 94px);
+        }
+      }
+
+      @media (max-width: 760px) {
+        .header {
+          height: 70px !important;
+        }
+
+        .campaign-hero {
+          display: grid !important;
+          grid-template-columns: minmax(0, 1fr) !important;
+          min-height: 0 !important;
+          padding: 38px 22px 20px !important;
+          gap: 0 !important;
+          overflow: hidden;
+        }
+
+        .campaign-copy {
+          max-width: 100%;
+          padding: 0 !important;
+        }
+
+        .campaign-copy .campaign-kicker {
+          margin-bottom: 18px;
+          font-size: 8px;
+          line-height: 1.45;
+          letter-spacing: .15em;
+        }
+
+        .campaign-copy h1 {
+          font-size: clamp(58px, 14vw, 82px) !important;
+          line-height: .88 !important;
+          letter-spacing: -.08em;
+        }
+
+        .campaign-copy h1 em {
+          display: block;
+          padding-left: .2em !important;
+          margin-top: .02em;
+        }
+
+        .campaign-copy p {
+          max-width: 350px;
+          margin: 19px 0 17px !important;
+          font-size: 14px;
+          line-height: 1.55 !important;
+        }
+
+        .campaign-copy .campaign-cta {
+          min-height: 54px;
+          margin-top: 3px;
+        }
+
+        .campaign-note,
+        .campaign-scroll,
+        .campaign-index {
+          display: none !important;
+        }
+
+        .campaign-art {
+          min-height: 0 !important;
+          height: 455px !important;
+          margin: 8px -8px 0 !important;
+          overflow: visible;
+        }
+
+        .campaign-stage {
+          min-height: 455px !important;
+          height: 455px !important;
+          padding: 0 !important;
+          overflow: visible;
+        }
+
+        .campaign-stage .shoe-slide {
+          inset: 0 !important;
+        }
+
+        .campaign-stage .shoe-slide img {
+          width: min(108%, 430px) !important;
+          max-height: 420px !important;
+          height: 100%;
+          object-fit: contain !important;
+        }
+
+        .campaign-stage .shoe-caption,
+        .campaign-stage .shoe-controls {
+          display: none !important;
+        }
+
+        .motion-ticker {
+          min-height: 56px;
+          padding: 14px 0;
+        }
+
+        .section {
+          padding: 54px 22px !important;
+        }
+
+        .head h2,
+        .section h2 {
+          margin-top: 11px;
+          line-height: .96;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .campaign-stage .shoe-slide,
+        .campaign-stage .shoe-slide img {
+          transition: none !important;
+          animation: none !important;
+        }
+      }
+
+
+      /* Paris Shoes — caption-to-product grouping and responsive type polish */
+      .campaign-stage {
+        padding: 0 0 66px !important;
+      }
+
+      .campaign-stage .shoe-slide {
+        inset: 0 0 66px !important;
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: clamp(8px, 1.2vw, 14px);
+        padding: 0 10px 4px;
+        box-sizing: border-box;
+      }
+
+      .campaign-stage .shoe-slide:not(.active) {
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
+
+      .campaign-stage .shoe-slide.active {
+        visibility: visible !important;
+        opacity: 1 !important;
+      }
+
+      .campaign-stage .shoe-slide img {
+        display: block;
+        flex: 0 1 auto;
+        width: min(128%, 700px) !important;
+        max-width: 100%;
+        height: auto !important;
+        max-height: min(500px, 66vh) !important;
+        object-fit: contain !important;
+        object-position: center;
+        margin: 0;
+        filter: drop-shadow(0 24px 18px rgba(40,34,26,.2)) !important;
+      }
+
+      .campaign-stage .shoe-caption {
+        position: static !important;
+        inset: auto !important;
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        align-self: center;
+        flex: 0 0 auto;
+        width: max-content;
+        max-width: calc(100% - 28px);
+        margin: 0 !important;
+        padding: 10px 15px !important;
+        background: rgba(243,240,233,.96) !important;
+        border: 1px solid var(--line) !important;
+        color: var(--ink) !important;
+        font-size: clamp(11px, 1.05vw, 13px) !important;
+        font-weight: 600;
+        line-height: 1.25;
+        letter-spacing: .105em !important;
+        text-align: center;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        z-index: 4;
+      }
+
+      .campaign-stage .shoe-controls {
+        bottom: 12px !important;
+        right: 4% !important;
+        gap: 9px !important;
+      }
+
+      .campaign-stage .shoe-controls > button {
+        width: 40px !important;
+        height: 40px !important;
+        min-width: 40px;
+        font-size: 19px !important;
+      }
+
+      .campaign-stage .shoe-dots {
+        gap: 8px !important;
+      }
+
+      .campaign-stage .shoe-dots button {
+        width: 9px !important;
+        height: 9px !important;
+        min-width: 9px;
+        min-height: 9px;
+      }
+
+      .campaign-copy .campaign-kicker {
+        font-size: clamp(9px, .85vw, 11px) !important;
+        letter-spacing: .15em;
+      }
+
+      .campaign-note {
+        font-size: clamp(9px, .8vw, 10px) !important;
+        letter-spacing: .13em;
+      }
+
+      .campaign-scroll {
+        font-size: 10px !important;
+      }
+
+      .home-featured .product > div:last-child,
+      .home-featured .product small {
+        font-size: clamp(11px, .95vw, 13px);
+        line-height: 1.4;
+      }
+
+      .product-img {
+        border-color: var(--line);
+      }
+
+      @media (min-width: 761px) {
+        .campaign-stage {
+          padding-bottom: 68px !important;
+        }
+
+        .campaign-stage .shoe-slide {
+          inset: 0 0 66px !important;
+        }
+
+        .campaign-stage .shoe-slide img {
+          max-height: min(520px, 68vh) !important;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .campaign-art {
+          height: 455px !important;
+          min-height: 455px !important;
+          margin-top: 6px !important;
+        }
+
+        .campaign-stage {
+          height: 455px !important;
+          min-height: 455px !important;
+          padding: 0 0 58px !important;
+          overflow: visible;
+        }
+
+        .campaign-stage .shoe-slide {
+          inset: 0 0 58px !important;
+          gap: 9px;
+          padding: 0 8px 2px;
+        }
+
+        .campaign-stage .shoe-slide img {
+          width: min(122%, 430px) !important;
+          max-height: 340px !important;
+        }
+
+        .campaign-stage .shoe-caption {
+          display: inline-flex !important;
+          max-width: calc(100% - 24px);
+          padding: 9px 12px !important;
+          font-size: clamp(10px, 2.8vw, 12px) !important;
+          letter-spacing: .09em !important;
+        }
+
+        .campaign-stage .shoe-controls {
+          display: flex !important;
+          align-items: center;
+          justify-content: center;
+          left: 50%;
+          right: auto !important;
+          bottom: 8px !important;
+          transform: translateX(-50%);
+          gap: 8px !important;
+          width: max-content;
+        }
+
+        .campaign-stage .shoe-controls > button {
+          width: 34px !important;
+          height: 34px !important;
+          min-width: 34px;
+          font-size: 16px !important;
+        }
+
+        .campaign-stage .shoe-dots {
+          gap: 7px !important;
+        }
+
+        .campaign-stage .shoe-dots button {
+          width: 8px !important;
+          height: 8px !important;
+          min-width: 8px;
+          min-height: 8px;
+        }
+
+        .campaign-stage .shoe-dots button[aria-current="true"] {
+          width: 10px !important;
+          height: 10px !important;
+          min-width: 10px;
+          min-height: 10px;
+        }
+
+        .section .eyebrow {
+          font-size: 9px;
+        }
+
+        .head h2,
+        .section h2 {
+          font-size: clamp(36px, 9.3vw, 46px);
+        }
+      }
+
+
+      /* Paris Shoes — compact, product-first hero refinement */
+      .campaign-hero {
+        min-height: clamp(560px, 76svh, 700px) !important;
+        padding-top: clamp(28px, 4vw, 52px) !important;
+        padding-bottom: clamp(28px, 4vw, 52px) !important;
+        gap: clamp(12px, 2vw, 28px) !important;
+      }
+
+      .campaign-copy {
+        padding: 0 !important;
+        align-self: center;
+      }
+
+      .campaign-copy h1 {
+        line-height: .84 !important;
+        margin: 0 !important;
+      }
+
+      .campaign-copy p {
+        margin: 20px 0 15px !important;
+        line-height: 1.55 !important;
+      }
+
+      .campaign-copy .campaign-cta {
+        width: fit-content !important;
+        min-width: 0 !important;
+        min-height: 0 !important;
+        padding: 13px 17px !important;
+        gap: 16px !important;
+        font-size: 10px !important;
+        line-height: 1.2 !important;
+        border-radius: 2px;
+      }
+
+      .campaign-art {
+        min-height: 0 !important;
+        height: min(590px, 68vh) !important;
+      }
+
+      .campaign-stage {
+        min-height: 0 !important;
+        height: 100% !important;
+        padding: 0 0 54px !important;
+      }
+
+      .campaign-stage .shoe-slide {
+        inset: 0 0 54px !important;
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 5px !important;
+      }
+
+      .campaign-stage .shoe-slide img {
+        width: min(136%, 760px) !important;
+        max-height: min(510px, 66vh) !important;
+        height: auto !important;
+        object-fit: contain !important;
+        filter: drop-shadow(0 25px 18px rgba(40,34,26,.22)) !important;
+      }
+      .campaign-stage .shoe-caption {
+        position: static !important;
+        inset: auto !important;
+        align-self: center;
+        margin: -2px 0 0 !important;
+        padding: 8px 12px !important;
+        max-width: calc(100% - 24px) !important;
+        font-size: clamp(11px, 1vw, 13px) !important;
+        letter-spacing: .1em !important;
+        line-height: 1.25 !important;
+      }
+
+      .campaign-stage .shoe-controls {
+        bottom: 4px !important;
+      }
+
+      .campaign-stage .shoe-slide,
+      .campaign-stage .shoe-slide.active {
+        transition: opacity .24s ease, transform .38s cubic-bezier(.2,.75,.25,1) !important;
+      }
+
+      @media (max-width: 760px) {
+        .campaign-hero {
+          min-height: 0 !important;
+          padding: 24px 22px 12px !important;
+          gap: 0 !important;
+          grid-template-columns: minmax(0, 1fr) !important;
+          overflow: hidden;
+        }
+
+        .campaign-copy {
+          width: 100%;
+          padding: 0 !important;
+          margin: 0 !important;
+        }
+
+        .campaign-copy .campaign-kicker {
+          margin: 0 0 15px !important;
+          font-size: 8px !important;
+          line-height: 1.35 !important;
+        }
+
+        .campaign-copy h1 {
+          font-size: clamp(60px, 14.2vw, 82px) !important;
+          line-height: .82 !important;
+          letter-spacing: -.085em !important;
+        }
+
+        .campaign-copy h1 em {
+          margin-top: .04em !important;
+          padding-left: .16em !important;
+        }
+
+        .campaign-copy p {
+          max-width: 370px !important;
+          margin: 15px 0 13px !important;
+          font-size: 14px !important;
+          line-height: 1.48 !important;
+        }
+
+        .campaign-copy .campaign-cta {
+          display: inline-flex !important;
+          width: auto !important;
+          min-height: 48px !important;
+          padding: 12px 15px !important;
+          margin: 0 !important;
+          gap: 14px !important;
+          font-size: 10px !important;
+          letter-spacing: .12em !important;
+        }
+
+        .campaign-art {
+          height: 340px !important;
+          min-height: 340px !important;
+          margin: 0 -8px !important;
+          width: calc(100% + 16px) !important;
+          overflow: visible;
+        }
+
+        .campaign-stage {
+          height: 340px !important;
+          min-height: 340px !important;
+          padding: 0 0 46px !important;
+          overflow: visible;
+        }
+
+        .campaign-stage .shoe-slide {
+          inset: 0 0 46px !important;
+          gap: 3px !important;
+          padding: 0 4px !important;
+        }
+
+        .campaign-stage .shoe-slide img {
+          width: min(142%, 500px) !important;
+          max-width: none !important;
+          max-height: 285px !important;
+          height: auto !important;
+          object-fit: contain !important;
+        }
+
+        .campaign-stage .shoe-caption {
+          display: inline-flex !important;
+          padding: 7px 10px !important;
+          margin-top: -1px !important;
+          font-size: 10px !important;
+          letter-spacing: .085em !important;
+        }
+
+        .campaign-stage .shoe-controls {
+          display: flex !important;
+          left: 50% !important;
+          right: auto !important;
+          bottom: 3px !important;
+          transform: translateX(-50%);
+          gap: 7px !important;
+        }
+
+        .campaign-stage .shoe-controls > button {
+          width: 32px !important;
+          height: 32px !important;
+          min-width: 32px !important;
+          font-size: 15px !important;
+        }
+
+        .campaign-stage .shoe-dots {
+          gap: 6px !important;
+        }
+
+        .campaign-stage .shoe-dots button {
+          width: 7px !important;
+          height: 7px !important;
+          min-width: 7px !important;
+          min-height: 7px !important;
+        }
+
+        .motion-ticker {
+          padding: 13px 0 !important;
+        }
+
+        .motion-ticker-track {
+          font-size: 14px !important;
+          gap: 24px !important;
+        }
+      }
+
+      @media (max-width: 380px) {
+        .campaign-hero {
+          padding-left: 18px !important;
+          padding-right: 18px !important;
+        }
+
+        .campaign-copy h1 {
+          font-size: clamp(56px, 14vw, 66px) !important;
+        }
+
+        .campaign-copy p {
+          font-size: 13px !important;
+        }
+
+        .campaign-art,
+        .campaign-stage {
+          height: 318px !important;
+          min-height: 318px !important;
+        }
+
+        .campaign-stage .shoe-slide img {
+          max-height: 265px !important;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .campaign-stage .shoe-slide,
+        .campaign-stage .shoe-slide img {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+
+      /* Final responsive balance: compact mobile action, stronger desktop product scale */
+      @media (min-width: 761px) {
+        .campaign-art,
+        .campaign-stage {
+          min-height: 610px !important;
+          height: min(680px, 78vh) !important;
+        }
+
+        .campaign-stage .shoe-slide img {
+          width: min(148%, 900px) !important;
+          max-width: none !important;
+          max-height: min(650px, 76vh) !important;
+          height: auto !important;
+          object-fit: contain !important;
+        }
+
+        .campaign-stage .shoe-slide {
+          inset: 0 0 60px !important;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .campaign-copy .campaign-cta {
+          min-height: 42px !important;
+          padding: 10px 13px !important;
+          margin-top: 12px !important;
+          margin-bottom: 12px !important;
+          gap: 10px !important;
+          font-size: 9px !important;
+          letter-spacing: .1em !important;
+          line-height: 1.1 !important;
+        }
+
+        .campaign-copy .campaign-cta span {
+          font-size: 16px !important;
+        }
+
+        .campaign-art {
+          margin-top: 4px !important;
+        }
+      }
+
+      /* Paris Shoes logo and final header / hero alignment */
+      .header { position:relative !important; display:flex !important; justify-content:space-between !important; }
+      .header .brand {
+        position:absolute !important;
+        left:50% !important;
+        top:50% !important;
+        transform:translate(-50%,-50%) !important;
+        display:flex !important;
+        align-items:center !important;
+        justify-content:center !important;
+        width:clamp(190px, 20vw, 270px) !important;
+        height:100% !important;
+        margin:0 !important;
+        z-index:2 !important;
+        letter-spacing:0 !important;
+      }
+      .header .brand img {
+        display:block !important;
+        width:100% !important;
+        max-height:64% !important;
+        height:auto !important;
+        object-fit:contain !important;
+      }
+      .header .nav { margin-left:auto !important; margin-right:0 !important; }
+      .campaign-copy h1 { white-space:normal; }
+      .campaign-copy p { margin-bottom:10px !important; }
+      .campaign-copy .campaign-cta { margin-top:4px !important; }
+      @media (max-width:760px) {
+        .header { display:grid !important; grid-template-columns:42px minmax(0,1fr) 88px !important; }
+        .header .brand { width:clamp(178px, 49vw, 220px) !important; }
+        .header .nav { margin:0 !important; }
+        .header .actions { justify-self:end !important; }
+        .campaign-copy p { margin:14px 0 8px !important; }
+        .campaign-copy .campaign-cta { margin-top:2px !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script>
+      const P = [
+        {
+          id: 1,
+          n: 'Everyday 01',
+          t: 'Everyday',
+          p: 128,
+          c: 'Chalk / Tomato',
+          i: '/resources/hero-shoe-1.png',
+          tag: 'BEST SELLER',
+          d: 'An easy-going everyday sneaker with a cushioned ride and considered, durable build.',
+        },
+        {
+          id: 2,
+          n: 'Runner 02',
+          t: 'Running',
+          p: 148,
+          c: 'Cloud / Silver',
+          i: '/resources/hero-shoe-2.png',
+          tag: 'NEW',
+          d: 'Light on your feet, steady under pressure. Built for daily miles and everything between.',
+        },
+        {
+          id: 3,
+          n: 'Trail 03',
+          t: 'Trail',
+          p: 162,
+          c: 'Moss / Stone',
+          i: '/resources/hero-shoe-3.png',
+          tag: 'TRAIL',
+          d: 'Grippy, protective and ready to leave the pavement behind.',
+        },
+        {
+          id: 4,
+          n: 'Court 04',
+          t: 'Lifestyle',
+          p: 118,
+          c: 'Ink / Bone',
+          i: '/resources/hero-shoe-2.png',
+          tag: 'LOW PROFILE',
+          d: 'A clean court-inspired silhouette made for all-day wear.',
+        },
+        {
+          id: 5,
+          n: 'Runner 05',
+          t: 'Running',
+          p: 154,
+          c: 'Tomato / Chalk',
+          i: '/resources/hero-shoe-5.png',
+          tag: 'LIGHTWEIGHT',
+          d: 'Responsive comfort for the long way home.',
+        },
+        {
+          id: 6,
+          n: 'Everyday 06',
+          t: 'Everyday',
+          p: 132,
+          c: 'Sand / Olive',
+          i: '/resources/hero-shoe-1.png',
+          tag: 'RECYCLED',
+          d: 'A versatile shape with soft materials and a lighter footprint.',
+        },
+        {
+          id: 7,
+          n: 'Trail 07',
+          t: 'Trail',
+          p: 168,
+          c: 'Slate / Lime',
+          i: '/resources/hero-shoe-3.png',
+          tag: 'ALL TERRAIN',
+          d: 'Confident traction and a stable platform for changing ground.',
+        },
+        {
+          id: 8,
+          n: 'Everyday 08',
+          t: 'Everyday',
+          p: 124,
+          c: 'White / Grey',
+          i: '/resources/hero-shoe-2.png',
+          tag: 'ESSENTIAL',
+          d: 'A quiet essential with a soft step and timeless lines.',
+        },
+      ];
+      const $ = s => document.querySelector(s),
+        money = n => '$' + n.toFixed(2);
+      let bag = JSON.parse(localStorage.getItem('ambleBag') || '[]'),
+        saved = JSON.parse(localStorage.getItem('ambleSaved') || '[]'),
+        size = 42,
+        sort = 'featured',
+        menu = false,
+        category = 'All';
+      const persist = () => {
+          localStorage.setItem('ambleBag', JSON.stringify(bag));
+          localStorage.setItem('ambleSaved', JSON.stringify(saved));
+        },
+        qty = () => bag.reduce((a, x) => a + x.q, 0),
+        total = () =>
+          bag.reduce(
+            (a, x) => a + (P.find(p => p.id === x.id)?.p || 0) * x.q,
+            0
+          ),
+        route = () => location.hash.replace(/^#\/?/, '') || 'home',
+        go = r => {
+          location.hash = '/' + r;
+          scrollTo(0, 0);
+        };
+      function notice(s) {
+        let n = $('#notice');
+        if (n) {
+          n.textContent = s;
+          n.classList.add('show');
+          setTimeout(() => n.classList.remove('show'), 1900);
+        }
+      }
+      function header() {
+        return (
+          '<header class="header"><button class="menu" id="menu">☰</button><a class="brand" href="#/home" aria-label="Paris Shoes home"><img src="/resources/paris-shoes-logo.png" alt="Paris Shoes"></a><nav class="nav ' +
+          (menu ? 'open' : '') +
+          '" id="nav"><a href="#/shop">Shop all</a><a href="#/shop?type=Running">Running</a><a href="#/shop?type=Trail">Trail</a><a href="#/shop?type=Everyday">Everyday</a><a href="#/factories">Our approach</a></nav><div class="actions"><a href="#/help"><span class="label">Help</span></a><a href="#/bag">Bag (' +
+          qty() +
+          ')</a></div></header>'
+        );
+      }
+      function footer() {
+        return '<footer class="footer"><div class="footgrid"><div><a class="brand" href="#/home" style="font-size:48px;color:white">Paris Shoes</a><p>Good shoes for wherever the day takes you. Thoughtfully made, ready to move.</p></div><div><h4>Explore</h4><a href="#/shop">Shop all</a><a href="#/shop?type=Running">Running</a><a href="#/shop?type=Trail">Trail</a><a href="#/size-guide">Size guide</a></div><div><h4>About</h4><a href="#/factories">Our factories</a><a href="#/help">Help & contact</a><a href="#/account">Your account</a></div><div><h4>Notes from Paris Shoes</h4><p>New releases, field notes and good things. No noise.</p><form class="newsletter" id="newsletter"><input type="email" placeholder="Your email address" required><button>↗</button></form></div></div><div class="footbottom"><span>© 2026 Paris Shoes</span><span>Made to move. Made to last.</span><span>Instagram · Pinterest</span></div></footer><div class="notice" id="notice"></div>';
+      }
+      function card(p) {
+        return (
+          '<article class="product"><div class="product-img"><a href="#/product/' +
+          p.id +
+          '"><img loading="lazy" src="' +
+          p.i +
+          '" alt="' +
+          p.n +
+          '"></a><button class="heart ' +
+          (saved.includes(p.id) ? 'on' : '') +
+          '" data-save="' +
+          p.id +
+          '">' +
+          (saved.includes(p.id) ? '♥' : '♡') +
+          '</button></div><div class="meta"><div><b><a href="#/product/' +
+          p.id +
+          '">' +
+          p.n +
+          '</a></b><small>' +
+          p.t +
+          ' · ' +
+          p.c +
+          '</small></div><span>' +
+          money(p.p) +
+          '</span></div></article>'
+        );
+      }
+      function home() {
+        return (
+          '<main class="home-page">' +
+          '<section class="campaign-hero">' +
+          '<div class="campaign-copy">' +
+          '<span class="campaign-kicker">The new everyday collection · 2026</span>' +
+          '<h1>Move<br><em>your way.</em></h1>' +
+          '<p>Designed for the miles you plan and the moments you don’t. Meet the shoes that make every direction feel right.</p>' +
+          '<a class="campaign-cta" href="#/shop">Explore the collection <span>↗</span></a>' +
+          '<div class="campaign-note"><b>01 / 05</b><span>Comfort in every direction</span></div>' +
+          '</div>' +
+          '<div class="campaign-art"><div class="campaign-ring"></div><div class="campaign-index"><strong>01</strong> / 05</div>' +
+          '<div class="campaign-stage shoe-slider" id="shoeSlider" aria-label="Featured shoes carousel" tabindex="0">' +
+          P.slice(0, 5).map((p, i) => '<div class="shoe-slide ' + (i === 0 ? 'active' : '') + '" data-shoe-slide="' + i + '" aria-hidden="' + (i !== 0) + '"><img src="/resources/hero-shoe-' + (i + 1) + '.png" alt="' + p.n + ' featured shoe"><span class="shoe-caption">' + p.n + ' · ' + p.c + '</span></div>').join('') +
+          '<div class="shoe-controls"><button type="button" id="shoePrev" aria-label="Previous shoe">←</button><div class="shoe-dots">' +
+          P.slice(0, 5).map((p, i) => '<button type="button" data-shoe-dot="' + i + '" aria-label="Show ' + p.n + '" aria-current="' + (i === 0) + '"></button>').join('') +
+          '</div><button type="button" id="shoeNext" aria-label="Next shoe">→</button></div></div></div>' +
+          '<div class="campaign-scroll">Scroll to discover ↓</div></section>' +
+          '<div class="motion-ticker"><div class="motion-ticker-track"><span>MADE TO MOVE</span><span>MADE TO LAST</span><span>FIND YOUR PACE</span><span>MADE TO MOVE</span><span>MADE TO LAST</span><span>FIND YOUR PACE</span></div></div>' +
+          '<section class="section home-featured reveal-section"><div class="head"><div><span class="eyebrow">Curated for your every day</span><h2>Meet your next<br>favourite pair.</h2></div><a class="link" href="#/shop">Shop all styles ↗</a></div><div class="products">' +
+          P.slice(0, 4).map(card).join('') +
+          '</div></section>' +
+          '<section class="section home-categories reveal-section" style="padding-top:0"><div class="head"><div><span class="eyebrow">Different days. Different directions.</span><h2>Find your kind of move.</h2></div></div><div class="categories">' +
+          [['Everyday', P[0]], ['Running', P[1]], ['Trail', P[2]]].map(x => '<a class="category" href="#/shop?type=' + x[0] + '"><img src="' + x[1].i + '" alt="' + x[0] + ' shoes"><b>' + x[0] + ' ↗</b></a>').join('') +
+          '</div></section>' +
+          '<section class="story home-story reveal-section"><img src="https://images.unsplash.com/photo-1520256862855-398228c41684?w=1200&q=85" alt="Craft and materials"><div class="copy"><span class="eyebrow">A better way forward</span><h2>Good things<br>take thought.</h2><p>We work with long-term partners, choose materials with care and keep asking how a shoe can do more with less. Better by design, not by slogan.</p><a class="link" href="#/factories">How we make things ↗</a></div></section>' +
+          '<section class="quote home-quote reveal-section"><small>A LITTLE REMINDER</small><blockquote>“The best route is rarely the shortest. Make room for the good detours.”</blockquote><small>— THE PARIS SHOES OUTLOOK</small></section></main>'
+        );
+      }
+      function shop() {
+        let q = new URLSearchParams(location.hash.split('?')[1] || ''),
+          type = q.get('type') || category,
+          list = P.filter(p => type === 'All' || p.t === type);
+        if (sort === 'low') list.sort((a, b) => a.p - b.p);
+        if (sort === 'high') list.sort((a, b) => b.p - a.p);
+        return (
+          '<main class="page"><div class="intro"><div><span class="eyebrow">The full collection</span><h1 class="page-title">Find your pair.</h1></div><p>Considered shapes, dependable comfort and a little room to wander. Find the shoe that fits your everyday.</p></div><div class="shop"><aside class="filters"><h3>Category</h3>' +
+          ['All', 'Everyday', 'Running', 'Trail', 'Lifestyle']
+            .map(
+              t =>
+                '<label><input type="radio" name="category" value="' +
+                t +
+                '" ' +
+                (type === t ? 'checked' : '') +
+                '> ' +
+                t +
+                '</label>'
+            )
+            .join('') +
+          '<h3>Price</h3><label><input type="checkbox" id="under"> Under $150</label><a class="link" href="#/size-guide">Size guide ↗</a></aside><div><div class="toolbar"><span>' +
+          list.length +
+          ' styles</span><select id="sort"><option value="featured">Featured</option><option value="low" ' +
+          (sort === 'low' ? 'selected' : '') +
+          '>Price: low to high</option><option value="high" ' +
+          (sort === 'high' ? 'selected' : '') +
+          '>Price: high to low</option></select></div><div class="products" id="catalogue">' +
+          list.map(card).join('') +
+          '</div></div></div></main>'
+        );
+      }
+      function product(id) {
+        let p = P.find(x => x.id === id) || P[0];
+        return (
+          '<main class="detail"><img src="' +
+          p.i +
+          '" alt="' +
+          p.n +
+          '"><div class="detail-info"><span class="eyebrow">' +
+          p.tag +
+          ' / ' +
+          p.t +
+          '</span><h1>' +
+          p.n +
+          '</h1><b>' +
+          money(p.p) +
+          '</b><p>' +
+          p.d +
+          '</p><p>Colour: <b>' +
+          p.c +
+          '</b></p><span class="eyebrow">Choose your size · <a href="#/size-guide">Size guide</a></span><div class="sizes">' +
+          [38, 39, 40, 41, 42, 43, 44, 45, 46, 47]
+            .map(
+              s =>
+                '<button class="size ' +
+                (size === s ? 'sel' : '') +
+                '" data-size="' +
+                s +
+                '">' +
+                s +
+                '</button>'
+            )
+            .join('') +
+          '</div><button class="btn" id="add">Add to bag · ' +
+          money(p.p) +
+          ' ↗</button><p>Free shipping over $150. Easy returns within 30 days.</p></div></main>'
+        );
+      }
+      function bagPage() {
+        if (!bag.length)
+          return '<main class="page"><span class="eyebrow">Your selection</span><h1 class="page-title">Your bag.</h1><div class="empty">Your bag is taking a little breather.<br><br><a class="link" href="#/shop">Find something good ↗</a></div></main>';
+        return (
+          '<main class="page"><span class="eyebrow">Nearly yours</span><h1 class="page-title">Your bag.</h1>' +
+          bag
+            .map((x, i) => {
+              let p = P.find(y => y.id === x.id);
+              return (
+                '<div class="bagrow"><img src="' +
+                p.i +
+                '"><div><b>' +
+                p.n +
+                '</b><p>' +
+                p.c +
+                ' · Size ' +
+                x.s +
+                '</p><div class="qty"><button data-qty="' +
+                i +
+                '" data-d="-1">−</button> ' +
+                x.q +
+                ' <button data-qty="' +
+                i +
+                '" data-d="1">+</button> <button data-remove="' +
+                i +
+                '">Remove</button></div></div><b class="rowprice">' +
+                money(p.p * x.q) +
+                '</b></div>'
+              );
+            })
+            .join('') +
+          '<div class="summary"><div><span>Subtotal</span><b>' +
+          money(total()) +
+          '</b></div><div><span>Shipping</span><span>' +
+          (total() >= 150 ? 'Complimentary' : 'Calculated at checkout') +
+          '</span></div><a class="btn" href="#/checkout">Continue to checkout ↗</a></div></main>'
+        );
+      }
+      function wishlist() {
+        let list = P.filter(p => saved.includes(p.id));
+        return (
+          '<main class="page"><span class="eyebrow">Keep the good ones close</span><h1 class="page-title">Your wishlist.</h1>' +
+          (list.length
+            ? '<div class="products">' + list.map(card).join('') + '</div>'
+            : '<div class="empty">Nothing saved just yet. Tap the heart on a shoe to keep it here.<br><br><a class="link" href="#/shop">Explore the collection ↗</a></div>') +
+          '</main>'
+        );
+      }
+      const pages = {
+        'size-guide': [
+          'A good fit changes everything',
+          'Find your fit.',
+          'Our shoes are designed around a comfortable, everyday fit. Use this guide as a starting point, and get in touch if you are between sizes.',
+          [
+            [
+              'Measure at home',
+              'Stand on a sheet of paper, mark heel to longest toe and measure both feet. Use the larger measurement.',
+            ],
+            [
+              'Between sizes?',
+              'For a closer fit, consider the smaller size. If you prefer extra room or wear thicker socks, size up.',
+            ],
+            [
+              'Still unsure?',
+              'Our team can help you find the right fit. Tell us your usual size and the style you have in mind.',
+            ],
+          ],
+        ],
+        factories: [
+          'Better by design',
+          'Made with care.',
+          'We believe good footwear starts with good relationships. We work with specialist makers and keep improving materials, comfort, durability and impact.',
+          [
+            [
+              'Long-term partners',
+              'We value consistency, fair collaboration and the people behind every pair.',
+            ],
+            [
+              'Materials with purpose',
+              'We look for durable components and lower-impact alternatives where they genuinely perform.',
+            ],
+            [
+              'Built to be worn',
+              'The most responsible shoe is one you reach for often.',
+            ],
+          ],
+        ],
+        help: [
+          'Here when you need us',
+          'How can we help?',
+          'Questions about fit, delivery or a pair you already own? Start here and our small team will point you in the right direction.',
+          [
+            [
+              'Shipping',
+              'Complimentary standard shipping on orders over $150. Delivery estimates are shown at checkout.',
+            ],
+            [
+              'Returns',
+              'Unworn shoes can be returned within 30 days of delivery in original packaging.',
+            ],
+            [
+              'Contact',
+              'Write to hello@parisshoes.example and include your order number if you have one.',
+            ],
+          ],
+        ],
+        account: [
+          'Your Paris Shoes',
+          'Welcome back.',
+          'Keep your details close and make your next pair a little easier to find.',
+          [
+            [
+              'Order history',
+              'Your order history will appear here when you sign in.',
+            ],
+            [
+              'Your details',
+              'Manage your contact and delivery details at checkout.',
+            ],
+            [
+              'Saved styles',
+              'Your wishlist is saved on this device for your next visit.',
+            ],
+          ],
+        ],
+      };
+      function info(k) {
+        let d = pages[k] || pages.help;
+        return (
+          '<main class="page"><span class="eyebrow">' +
+          d[0] +
+          '</span><h1 class="page-title">' +
+          d[1] +
+          '</h1><p style="max-width:580px;line-height:1.8;color:var(--muted)">' +
+          d[2] +
+          '</p><div class="info">' +
+          d[3]
+            .map(
+              x => '<article><h3>' + x[0] + '</h3><p>' + x[1] + '</p></article>'
+            )
+            .join('') +
+          '</div>' +
+          (k === 'account'
+            ? '<p><a class="btn" href="#/wishlist">View wishlist ↗</a></p>'
+            : '') +
+          '</main>'
+        );
+      }
+      function checkout() {
+        return (
+          '<main class="page"><span class="eyebrow">The last little step</span><h1 class="page-title">Checkout.</h1><div class="shop" style="margin-top:35px"><form id="checkout" class="form"><input name="name" placeholder="Full name" required><input name="email" type="email" placeholder="Email address" required><input class="wide" name="address" placeholder="Street address" required><input name="city" placeholder="City" required><input name="postal" placeholder="Postal code" required><select class="wide" required><option value="">Select country</option><option>Bangladesh</option><option>United States</option><option>United Kingdom</option></select><button class="btn wide">Place demo order ↗</button><p class="wide" style="font-size:11px;color:var(--muted)">Demo storefront: no payment is collected and no order is transmitted.</p></form><aside class="summary" style="margin:0"><h3>Order summary</h3>' +
+          bag
+            .map(
+              x =>
+                '<div><span>' +
+                P.find(p => p.id === x.id).n +
+                ' × ' +
+                x.q +
+                '</span><b>' +
+                money(P.find(p => p.id === x.id).p * x.q) +
+                '</b></div>'
+            )
+            .join('') +
+          '<div><b>Total</b><b>' +
+          money(total()) +
+          '</b></div></aside></div></main>'
+        );
+      }
+      function render() {
+        let r = route(),
+          body =
+            r === 'home'
+              ? home()
+              : r === 'shop'
+                ? shop()
+                : r.startsWith('product/')
+                  ? product(Number(r.split('/')[1]))
+                  : r === 'bag'
+                    ? bagPage()
+                    : r === 'wishlist'
+                      ? wishlist()
+                      : r === 'checkout'
+                        ? checkout()
+                        : info(r);
+        $('#app').innerHTML = header() + body + footer();
+        bind();
+      }
+      let shoeTimer = null;
+      function initShoeSlider() {
+        const slider = $('#shoeSlider');
+        clearInterval(shoeTimer);
+        shoeTimer = null;
+        if (!slider) return;
+        const slides = [...slider.querySelectorAll('[data-shoe-slide]')];
+        const dots = [...slider.querySelectorAll('[data-shoe-dot]')];
+        const heroIndex = $('.campaign-index strong');
+        const heroNote = $('.campaign-note b');
+        let active = 0;
+        const show = index => {
+          active = (index + slides.length) % slides.length;
+          slides.forEach((slide, i) => {
+            slide.classList.toggle('active', i === active);
+            slide.setAttribute('aria-hidden', String(i !== active));
+          });
+          dots.forEach((dot, i) => dot.setAttribute('aria-current', String(i === active)));
+          if (heroIndex) heroIndex.textContent = String(active + 1).padStart(2, '0');
+          if (heroNote) heroNote.textContent = String(active + 1).padStart(2, '0') + ' / ' + String(slides.length).padStart(2, '0');
+        };
+        const next = () => show(active + 1);
+        const previous = () => show(active - 1);
+        const restart = () => {
+          clearInterval(shoeTimer);
+          shoeTimer = setInterval(next, 2400);
+        };
+        $('#shoeNext')?.addEventListener('click', () => { next(); restart(); });
+        $('#shoePrev')?.addEventListener('click', () => { previous(); restart(); });
+        dots.forEach((dot, i) => dot.addEventListener('click', () => { show(i); restart(); }));
+        let startX = 0;
+        slider.addEventListener('pointerdown', event => { startX = event.clientX; });
+        slider.addEventListener('pointerup', event => {
+          const delta = event.clientX - startX;
+          if (Math.abs(delta) > 38) {
+            if (delta < 0) next();
+            else previous();
+            restart();
+          }
+        });
+        slider.addEventListener('keydown', event => {
+          if (event.key === 'ArrowRight') { next(); restart(); }
+          if (event.key === 'ArrowLeft') { previous(); restart(); }
+        });
+        slider.addEventListener('mouseenter', () => clearInterval(shoeTimer));
+        slider.addEventListener('mouseleave', restart);
+        slider.addEventListener('focusin', () => clearInterval(shoeTimer));
+        slider.addEventListener('focusout', restart);
+        restart();
+      }
+      function initHomeMotion() {
+        const sections = document.querySelectorAll('.reveal-section');
+        if (!sections.length) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
+          sections.forEach(section => section.classList.add('is-visible'));
+          return;
+        }
+        const observer = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.14, rootMargin: '0px 0px -35px 0px' });
+        sections.forEach(section => observer.observe(section));
+      }
+      function bind() {
+        initShoeSlider();
+        initHomeMotion();
+        $('#menu')?.addEventListener('click', () => {
+          menu = !menu;
+          $('#nav').classList.toggle('open', menu);
+        });
+        document.querySelectorAll('[data-save]').forEach(b =>
+          b.addEventListener('click', () => {
+            let id = +b.dataset.save;
+            saved = saved.includes(id)
+              ? saved.filter(x => x !== id)
+              : [...saved, id];
+            persist();
+            render();
+            notice('Wishlist updated');
+          })
+        );
+        document.querySelectorAll('[data-size]').forEach(b =>
+          b.addEventListener('click', () => {
+            size = +b.dataset.size;
+            document
+              .querySelectorAll('[data-size]')
+              .forEach(x => x.classList.remove('sel'));
+            b.classList.add('sel');
+          })
+        );
+        $('#add')?.addEventListener('click', () => {
+          let id = +route().split('/')[1],
+            x = bag.find(x => x.id === id && x.s === size);
+          x ? x.q++ : bag.push({ id, s: size, q: 1 });
+          persist();
+          render();
+          notice('Added to your bag');
+        });
+        document.querySelectorAll('[data-qty]').forEach(b =>
+          b.addEventListener('click', () => {
+            let i = +b.dataset.qty;
+            bag[i].q += +b.dataset.d;
+            if (bag[i].q < 1) bag.splice(i, 1);
+            persist();
+            render();
+          })
+        );
+        document.querySelectorAll('[data-remove]').forEach(b =>
+          b.addEventListener('click', () => {
+            bag.splice(+b.dataset.remove, 1);
+            persist();
+            render();
+          })
+        );
+        document.querySelectorAll('[name=category]').forEach(b =>
+          b.addEventListener('change', () => {
+            category = b.value;
+            location.hash =
+              '/shop' + (category === 'All' ? '' : '?type=' + category);
+          })
+        );
+        $('#sort')?.addEventListener('change', e => {
+          sort = e.target.value;
+          render();
+        });
+        $('#under')?.addEventListener('change', e => {
+          let q = e.target.checked;
+          $('#catalogue').innerHTML = P.filter(
+            p => (category === 'All' || p.t === category) && (!q || p.p < 150)
+          )
+            .map(card)
+            .join('');
+          bind();
+        });
+        $('#newsletter')?.addEventListener('submit', e => {
+          e.preventDefault();
+          notice('Thanks for joining the Paris Shoes list');
+          e.target.reset();
+        });
+        $('#checkout')?.addEventListener('submit', e => {
+          e.preventDefault();
+          if (!e.target.reportValidity()) return;
+          notice('Demo order details accepted — no payment taken');
+          bag = [];
+          persist();
+          setTimeout(() => go('home'), 1100);
+        });
+      }
+      window.addEventListener('hashchange', () => {
+        menu = false;
+        render();
+      });
+      render();
+    </script>
+  </body>
+</html>

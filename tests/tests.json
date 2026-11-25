@@ -1,0 +1,96 @@
+[
+  {
+    "name": "Explore the redesigned animated homepage and collection",
+    "sanity": true,
+    "viewport": "desktop",
+    "covers": [
+      "cinematic hero entrance motion",
+      "automatic shoe carousel",
+      "manual carousel controls",
+      "homepage featured collection",
+      "category navigation",
+      "homepage scroll reveal animations"
+    ],
+    "description": "Verifies the campaign hero, automatic featured shoe changes, and key homepage shopping paths.",
+    "steps": [
+      "Open the homepage and observe the animated campaign banner",
+      "Wait for the featured shoe to advance automatically",
+      "Use the next arrow and a carousel dot",
+      "Scroll to the featured products and category cards",
+      "Open the Trail category"
+    ],
+    "expected": "The hero loads with layered motion, shoes rotate automatically and manually, homepage sections reveal on scroll, and Trail opens the filtered collection."
+  },
+  {
+    "name": "Swipe the campaign shoe showcase on mobile",
+    "viewport": "mobile",
+    "covers": [
+      "mobile responsive campaign hero",
+      "touch swipe carousel interaction",
+      "mobile automatic and swipe carousel behavior",
+      "reduced horizontal overflow"
+    ],
+    "description": "Checks the full campaign banner and shoe carousel adapt to a narrow touch screen.",
+    "steps": [
+      "Open the homepage at mobile width",
+      "Swipe left across the featured shoe image",
+      "Swipe right across the featured shoe image",
+      "Wait for the automatic featured shoe change"
+    ],
+    "expected": "The hero stacks with balanced header and typography spacing, the caption and control overlays are hidden on mobile, swipe gestures and automatic changes still work, and the page has no unwanted horizontal overflow."
+  },
+  {
+    "name": "Add a selected shoe to the bag",
+    "viewport": "desktop",
+    "covers": [
+      "product details",
+      "size selection",
+      "bag quantity and subtotal"
+    ],
+    "description": "Checks a selected size can be added and quantity changed.",
+    "steps": [
+      "Open a product",
+      "Select size 42",
+      "Add to bag",
+      "Increase quantity"
+    ],
+    "expected": "The bag shows the selected product, size, quantity and updated subtotal."
+  },
+  {
+    "name": "Manage wishlist",
+    "viewport": "desktop",
+    "covers": [
+      "wishlist toggle",
+      "wishlist page",
+      "remove saved item"
+    ],
+    "description": "Checks saved products appear on the wishlist and can be removed.",
+    "steps": [
+      "Tap a product heart",
+      "Open Wishlist",
+      "Remove the product"
+    ],
+    "expected": "The item appears in Wishlist and disappears after removal."
+  },
+  {
+    "name": "Validate checkout and visit information pages",
+    "viewport": "mobile",
+    "covers": [
+      "checkout form",
+      "required field validation",
+      "responsive layout",
+      "size guide",
+      "factory story",
+      "help page",
+      "account page",
+      "newsletter"
+    ],
+    "description": "Checks mobile checkout validation and access to supporting brand information.",
+    "steps": [
+      "Add a product to the bag",
+      "Open Checkout and submit the empty form",
+      "Open Size Guide, Our Factories, Help and Account"
+    ],
+    "expected": "Required-field validation appears without submitting an order, and each information page displays its relevant content."
+  }
+]
