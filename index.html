@@ -2257,6 +2257,23 @@
 
 /* Live masthead fix: this stylesheet is embedded in index.html and is the
    stylesheet Vercel actually serves. Equal side tracks keep the logo centered. */
+
+/* Header alignment refinement: navigation and actions anchor to the outer
+   edges while the equal grid tracks keep the logo on the viewport center. */
+.header .nav,
+.header .actions { min-width: 0 !important; }
+.header .nav a,
+.header .actions a {
+  display: inline-flex !important;
+  align-items: center !important;
+  min-height: 40px !important;
+  line-height: 1.2 !important;
+}
+.header .menu {
+  align-self: center !important;
+  margin: 0 !important;
+}
+
 .header {
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) 184px minmax(0, 1fr) !important;
@@ -2291,7 +2308,7 @@
 .header .nav {
   grid-column: 1 !important;
   grid-row: 1 !important;
-  justify-self: end !important;
+  justify-self: start !important;
   display: flex !important;
   flex-wrap: nowrap !important;
   align-items: center !important;
@@ -2306,7 +2323,7 @@
 .header .actions {
   grid-column: 3 !important;
   grid-row: 1 !important;
-  justify-self: start !important;
+  justify-self: end !important;
   display: flex !important;
   align-items: center !important;
   gap: clamp(10px, 1.3vw, 18px) !important;
@@ -2326,7 +2343,7 @@
   .header .menu {
     grid-column: 1 !important;
     grid-row: 1 !important;
-    justify-self: end !important;
+    justify-self: start !important;
     display: grid !important;
     place-items: center !important;
     width: 42px !important;
@@ -2363,7 +2380,7 @@
   .header .menu {
     grid-column: 1 !important;
     grid-row: 1 !important;
-    justify-self: end !important;
+    justify-self: start !important;
     display: grid !important;
     place-items: center !important;
     width: 40px !important;
@@ -2379,7 +2396,7 @@
   .header .actions {
     grid-column: 3 !important;
     grid-row: 1 !important;
-    justify-self: start !important;
+    justify-self: end !important;
     gap: 8px !important;
     font-size: 10px !important;
   }
