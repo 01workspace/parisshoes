@@ -92,5 +92,26 @@
       "Open Size Guide, Our Factories, Help and Account"
     ],
     "expected": "Required-field validation appears without submitting an order, and each information page displays its relevant content."
+  },
+  {
+    "name": "Verify aligned header and readable typography across breakpoints",
+    "viewport": "desktop and mobile",
+    "covers": [
+      "three-column desktop masthead alignment",
+      "centered logo with balanced navigation and actions",
+      "mobile menu and help/bag actions",
+      "readable body, product, form and footer text",
+      "keyboard focus visibility",
+      "reduced-motion preference"
+    ],
+    "description": "Regression coverage for the refreshed masthead and improved type scale across storefront pages.",
+    "steps": [
+      "Open the homepage at desktop width and confirm the logo is centered between navigation and actions",
+      "Resize to tablet and mobile widths and open the menu",
+      "Visit Shop, a product detail, Bag, Wishlist, Checkout, Size Guide, Our Approach, Help and Account",
+      "Tab through links, buttons and form fields",
+      "Enable reduced motion and reload"
+    ],
+    "expected": "The desktop header has three aligned columns with no logo overlap; mobile navigation opens below the header with visible Help and Bag actions; text remains legible and controls have visible focus states; all listed routes render without horizontal overflow."
   }
 ]
