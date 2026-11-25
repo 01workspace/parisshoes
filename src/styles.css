@@ -252,3 +252,112 @@ a, button, input, select { -webkit-tap-highlight-color: transparent; }
   .header .nav a { padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
   .header .actions { grid-column: 3; grid-row: 1; gap: 14px !important; font-size: 11px !important; }
 }
+
+
+/* Definitive masthead layout: keep the logo in its own centered lane.
+   Navigation switches to the menu before the desktop lanes get crowded. */
+@media (min-width: 1251px) {
+  .header {
+    position: sticky !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    height: 88px !important;
+    min-height: 88px !important;
+    padding: 0 clamp(28px, 4vw, 64px) !important;
+    gap: 0 !important;
+  }
+  .header .menu { display: none !important; }
+  .header .brand {
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 176px !important;
+    height: 64px !important;
+    margin: 0 !important;
+    z-index: 3 !important;
+  }
+  .header .brand img {
+    display: block !important;
+    width: 100% !important;
+    max-width: 176px !important;
+    height: 100% !important;
+    max-height: 52px !important;
+    object-fit: contain !important;
+  }
+  .header .nav {
+    position: static !important;
+    display: flex !important;
+    flex: 0 1 calc(50% - 120px) !important;
+    max-width: calc(50% - 120px) !important;
+    min-width: 0 !important;
+    flex-wrap: nowrap !important;
+    gap: clamp(9px, 1.15vw, 17px) !important;
+    overflow: hidden !important;
+    font-size: 10px !important;
+    letter-spacing: .055em !important;
+    white-space: nowrap !important;
+  }
+  .header .nav a { flex: 0 0 auto !important; }
+  .header .actions {
+    position: static !important;
+    display: flex !important;
+    flex: 0 0 auto !important;
+    margin-left: auto !important;
+    gap: clamp(12px, 1.4vw, 20px) !important;
+    font-size: 11px !important;
+    letter-spacing: .06em !important;
+    white-space: nowrap !important;
+  }
+}
+@media (min-width: 901px) and (max-width: 1250px) {
+  .header {
+    position: sticky !important;
+    display: grid !important;
+    grid-template-columns: 46px minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    gap: 14px !important;
+    height: 78px !important;
+    min-height: 78px !important;
+    padding-inline: 28px !important;
+  }
+  .header .menu {
+    grid-column: 1 !important; grid-row: 1 !important;
+    display: grid !important; place-items: center !important;
+    width: 42px !important; height: 42px !important; padding: 0 !important;
+    border: 1px solid var(--line) !important; border-radius: 50% !important;
+    background: transparent !important; color: var(--ink) !important; font-size: 20px !important;
+  }
+  .header .brand {
+    position: static !important; transform: none !important;
+    grid-column: 2 !important; grid-row: 1 !important;
+    justify-self: center !important; width: 176px !important;
+    height: 64px !important; margin: 0 !important;
+  }
+  .header .brand img {
+    display: block !important; width: 100% !important;
+    height: 100% !important; max-height: 48px !important;
+    object-fit: contain !important;
+  }
+  .header .nav {
+    display: none !important;
+    position: absolute !important; top: 100% !important; left: 0 !important; right: 0 !important;
+    z-index: 12 !important; padding: 18px 28px 24px !important;
+    background: var(--paper) !important; border-bottom: 1px solid var(--line) !important;
+    box-shadow: 0 16px 28px #24231f0d !important;
+    flex-direction: column !important; align-items: stretch !important; gap: 0 !important;
+    white-space: normal !important; max-width: none !important;
+  }
+  .header .nav.open { display: flex !important; }
+  .header .nav a { padding: 14px 0 !important; border-bottom: 1px solid var(--line) !important; font-size: 13px !important; }
+  .header .actions {
+    grid-column: 3 !important; grid-row: 1 !important;
+    display: flex !important; justify-self: end !important;
+    gap: 14px !important; font-size: 11px !important;
+    white-space: nowrap !important;
+  }
+}
