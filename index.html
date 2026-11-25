@@ -2516,6 +2516,37 @@
         .campaign-stage .shoe-slide img { animation: none !important; transition: none !important; }
       }
 
+
+/* Desktop masthead: mirror both sides around the centered wordmark. */
+@media (min-width: 1101px) {
+  .header {
+    grid-template-columns: minmax(0, 1fr) 224px minmax(0, 1fr) !important;
+    column-gap: 20px !important;
+  }
+  .header .brand {
+    width: 224px !important;
+    height: 68px !important;
+  }
+  .header .brand img {
+    max-width: 224px !important;
+    max-height: 58px !important;
+  }
+  .header .nav {
+    justify-self: end !important;
+    justify-content: flex-end !important;
+    gap: 14px !important;
+    font-size: 12px !important;
+    letter-spacing: .085em !important;
+  }
+  .header .actions {
+    justify-self: start !important;
+    justify-content: flex-start !important;
+    gap: 14px !important;
+    font-size: 12px !important;
+    letter-spacing: .085em !important;
+  }
+}
+
 </style>
   </head>
   <body>
