@@ -102,7 +102,9 @@
       "mobile menu and help/bag actions",
       "readable body, product, form and footer text",
       "keyboard focus visibility",
-      "reduced-motion preference"
+      "reduced-motion preference",
+      "logo image bounded to reserved center column",
+      "navigation collapses before desktop header collision"
     ],
     "description": "Regression coverage for the refreshed masthead and improved type scale across storefront pages.",
     "steps": [
@@ -110,8 +112,9 @@
       "Resize to tablet and mobile widths and open the menu",
       "Visit Shop, a product detail, Bag, Wishlist, Checkout, Size Guide, Our Approach, Help and Account",
       "Tab through links, buttons and form fields",
-      "Enable reduced motion and reload"
+      "Enable reduced motion and reload",
+      "Check widths at 1200px, 1024px and 901px"
     ],
-    "expected": "The desktop header has three aligned columns with no logo overlap; mobile navigation opens below the header with visible Help and Bag actions; text remains legible and controls have visible focus states; all listed routes render without horizontal overflow."
+    "expected": "Above 1200px the logo stays centered in a reserved column with navigation and actions clear of it; from 901px to 1200px navigation moves into the menu without overlapping the logo; mobile menu, readable text, keyboard focus and reduced motion remain functional."
   }
 ]
