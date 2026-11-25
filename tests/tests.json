@@ -94,27 +94,23 @@
     "expected": "Required-field validation appears without submitting an order, and each information page displays its relevant content."
   },
   {
-    "name": "Verify aligned header and readable typography across breakpoints",
+    "name": "Verify rebuilt symmetric centered masthead at desktop and tablet widths",
     "viewport": "desktop and mobile",
     "covers": [
-      "three-column desktop masthead alignment",
-      "centered logo with balanced navigation and actions",
-      "mobile menu and help/bag actions",
-      "readable body, product, form and footer text",
-      "keyboard focus visibility",
-      "reduced-motion preference",
-      "logo image bounded to reserved center column",
-      "navigation collapses before desktop header collision"
+      "equal-width left and right header zones",
+      "logo centered on viewport midpoint",
+      "matching navigation-to-logo and logo-to-actions gaps",
+      "tablet menu and right-side actions",
+      "mobile menu and help/bag actions"
     ],
     "description": "Regression coverage for the refreshed masthead and improved type scale across storefront pages.",
     "steps": [
-      "Open the homepage at desktop width and confirm the logo is centered between navigation and actions",
-      "Resize to tablet and mobile widths and open the menu",
-      "Visit Shop, a product detail, Bag, Wishlist, Checkout, Size Guide, Our Approach, Help and Account",
-      "Tab through links, buttons and form fields",
-      "Enable reduced motion and reload",
-      "Check widths at 1200px, 1024px and 901px"
+      "Open the homepage at 1440px and inspect the header",
+      "Confirm the logo center matches the viewport center",
+      "Compare the gap from the logo to the left navigation and right actions",
+      "Resize to 1280px, 1100px, 900px and 390px",
+      "Open the tablet and mobile navigation menus"
     ],
-    "expected": "Above 1200px the logo stays centered in a reserved column with navigation and actions clear of it; from 901px to 1200px navigation moves into the menu without overlapping the logo; mobile menu, readable text, keyboard focus and reduced motion remain functional."
+    "expected": "At desktop widths the logo is in the exact middle column, the left navigation and right actions occupy equal side zones, and their inner gaps to the logo match; at tablet widths the menu occupies the left zone and actions the right zone without overlap; mobile layout remains usable."
   }
 ]
