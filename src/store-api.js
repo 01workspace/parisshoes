@@ -48,6 +48,7 @@ export function normalizeProduct(row) {
     slug: row.slug,
     n: clean(row.name),
     t: clean(row.category) || 'Shoes',
+    audience: ['men', 'women', 'kids', 'unisex'].includes(clean(row.audience).toLowerCase()) ? clean(row.audience).toLowerCase() : 'unisex',
     p: Number(row.price || 0),
     currency: /^[A-Z]{3}$/.test(clean(row.currency).toUpperCase()) ? clean(row.currency).toUpperCase() : 'BDT',
     c: clean(row.colorway),
@@ -58,7 +59,30 @@ export function normalizeProduct(row) {
     variants,
     featured: Boolean(row.is_featured),
     sortOrder: Number(row.sort_order || 0),
+    createdAt: row.created_at || null,
   };
+}
+
+export function filterProducts(products, { audience = 'All', category = 'All', search = '' } = {}) {
+  const audienceFilter = clean(audience).toLowerCase();
+  const categoryFilter = clean(category).toLowerCase();
+  const searchFilter = clean(search).toLowerCase();
+
+  return products.filter(product => {
+    const productAudience = clean(product.audience).toLowerCase() || 'unisex';
+    const audienceMatches =
+      !audienceFilter || audienceFilter === 'all' ||
+      productAudience === 'unisex' || productAudience === audienceFilter;
+    const categoryMatches =
+      !categoryFilter || categoryFilter === 'all' ||
+      clean(product.t).toLowerCase() === categoryFilter;
+    const searchMatches =
+      !searchFilter ||
+      [product.n, product.t, product.c, product.tag].some(value =>
+        clean(value).toLowerCase().includes(searchFilter)
+      );
+    return audienceMatches && categoryMatches && searchMatches;
+  });
 }
 
 export function createStoreApi({
@@ -101,7 +125,7 @@ export function createStoreApi({
     configured,
 
     async getProducts() {
-      const query = `?select=id,slug,name,description,category,price,currency,colorway,badge,is_featured,sort_order,product_images(id,image_url,alt_text,position),product_variants(id,size,sku,stock_quantity,is_available)&is_active=eq.true&order=is_featured.desc,sort_order.asc,created_at.desc&limit=200`;
+      const query = `?select=id,slug,name,description,category,audience,price,currency,colorway,badge,is_featured,sort_order,created_at,product_images(id,image_url,alt_text,position),product_variants(id,size,sku,stock_quantity,is_available)&is_active=eq.true&order=is_featured.desc,sort_order.asc,created_at.desc&limit=200`;
       const rows = await request('products', { query });
       if (!Array.isArray(rows)) throw new Error('The catalogue returned an unexpected response.');
       return rows.map(normalizeProduct);
