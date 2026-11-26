@@ -2,6 +2,7 @@ import './admin.css';
 import { summarizeAdminData, normalizeProductDraft, parseStockQuantity } from './admin-logic.js';
 
 const root = document.querySelector('#admin-root');
+if (!root) throw new Error('The Paris Shoes admin root element is missing.');
 const supabaseUrl = String(import.meta.env.VITE_SUPABASE_URL || '').replace(/\/$/, '');
 const publishableKey = String(import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || '');
 const money = value => new Intl.NumberFormat('en-BD', { style: 'currency', currency: 'BDT', maximumFractionDigits: 0 }).format(Number(value) || 0);
@@ -227,7 +228,6 @@ function render() {
   document.title = owner ? 'Admin · Paris Shoes' : 'Owner sign in · Paris Shoes';
   if (!owner) { root.innerHTML = loginPage() + '<div class="ad-notice" role="status"></div>'; return; }
   root.innerHTML = shell((loading ? '<div class="ad-loading"><span></span><p>Loading verified store data…</p></div>' : pageContent()) + (loading ? '' : '')) + (editingId && view === 'products' ? editorPage(data.products.find(p => String(p.id) === editingId) || {}) : '');
-  if (noticeText) notify(noticeText);
 }
 
 function goto(next) {
@@ -367,5 +367,4 @@ root.addEventListener('submit', async event => {
 root.addEventListener('input', event => { if (event.target.id === 'ad-product-search' || event.target.id === 'ad-stock-search') filterTables(); });
 root.addEventListener('change', event => { if (event.target.id === 'ad-product-status' || event.target.id === 'ad-stock-filter') filterTables(); });
 
-if (!root) throw new Error('Missing admin root element.');
 render();
