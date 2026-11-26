@@ -2558,12 +2558,37 @@
   }
 }
 
+      .detail-gallery { min-width: 0; }
+      .detail-gallery > img { width: 100%; max-height: 650px; object-fit: contain; background: var(--paper-2); border: 1px solid var(--line); }
+      .detail-thumbs { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+      .detail-thumbs button { width: 76px; height: 76px; padding: 5px; border: 1px solid var(--line); background: transparent; }
+      .detail-thumbs button[aria-pressed="true"] { border-color: var(--ink); }
+      .detail-thumbs img { width: 100%; height: 100%; object-fit: contain; }
+      .size:disabled, .form button:disabled, .newsletter button:disabled { opacity: .38; cursor: not-allowed; }
+      .form textarea { width: 100%; min-height: 140px; resize: vertical; background: transparent; border: 1px solid var(--line); padding: 12px; font: inherit; }
+      .form-status, .newsletter-status { color: var(--muted); font-size: 12px; line-height: 1.6; }
+      .newsletter-status { margin: 8px 0 0; min-height: 18px; }
+      .catalogue-empty { grid-column: 1 / -1; max-width: 650px; padding: 30px 0; color: var(--muted); border-top: 1px solid var(--line); font-size: 14px; line-height: 1.7; }
+      .product-image-placeholder { width: 100%; height: 100%; min-height: 150px; display: grid; place-items: center; padding: 20px; color: var(--muted); background: var(--paper-2); border: 1px solid var(--line); font-size: 11px; text-transform: uppercase; letter-spacing: .12em; text-align: center; }
+      .product-image-placeholder-large { min-height: 360px; }
+      .bag-image-wrap { width: 110px; height: 110px; }
+      .bag-image-wrap img { width: 100%; height: 100%; object-fit: contain; background: var(--paper-2); }
+      @media (max-width: 640px) {
+        .detail-gallery > img { max-height: 420px; }
+        .detail-thumbs button { width: 62px; height: 62px; }
+        .bag-image-wrap { width: 85px; height: 85px; }
+      }
 </style>
   </head>
   <body>
     <div id="app"></div>
-    <script>
-      const P = [
+    <script type="module">
+      import { createStoreApi } from '/src/store-api.js';
+      const storeApi = createStoreApi({
+        supabaseUrl: import.meta.env.VITE_SUPABASE_URL,
+        publishableKey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+      });
+      const DEMO_PRODUCTS = [
         {
           id: 1,
           n: 'Everyday 01',
@@ -2645,8 +2670,12 @@
           d: 'A quiet essential with a soft step and timeless lines.',
         },
       ];
+      let P = [];
       const $ = s => document.querySelector(s),
-        money = n => '$' + n.toFixed(2);
+        money = (n, currency = 'BDT') => new Intl.NumberFormat('en-BD', { style: 'currency', currency, maximumFractionDigits: 0 }).format(Number(n) || 0),
+        escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+      let catalogueReady = false,
+        catalogueMessage = '';
       let bag = JSON.parse(localStorage.getItem('ambleBag') || '[]'),
         saved = JSON.parse(localStorage.getItem('ambleSaved') || '[]'),
         size = 42,
@@ -2660,7 +2689,7 @@
         qty = () => bag.reduce((a, x) => a + x.q, 0),
         total = () =>
           bag.reduce(
-            (a, x) => a + (P.find(p => p.id === x.id)?.p || 0) * x.q,
+            (a, x) => a + (P.find(p => String(p.id) === String(x.id))?.p || 0) * x.q,
             0
           ),
         route = () => location.hash.replace(/^#\/?/, '') || 'home',
@@ -2686,35 +2715,23 @@
         );
       }
       function footer() {
-        return '<footer class="footer"><div class="footgrid"><div><a class="brand" href="#/home" style="font-size:48px;color:white">Paris Shoes</a><p>Good shoes for wherever the day takes you. Thoughtfully made, ready to move.</p></div><div><h4>Explore</h4><a href="#/shop">Shop all</a><a href="#/shop?type=Running">Running</a><a href="#/shop?type=Trail">Trail</a><a href="#/size-guide">Size guide</a></div><div><h4>About</h4><a href="#/factories">Our factories</a><a href="#/help">Help & contact</a><a href="#/account">Your account</a></div><div><h4>Notes from Paris Shoes</h4><p>New releases, field notes and good things. Newsletter sign-up is coming soon.</p></div></div><div class="footbottom"><span>© 2026 Paris Shoes</span><span>Made to move. Made to last.</span><span>Instagram · Pinterest</span></div></footer><div class="notice" id="notice"></div>';
+        return '<footer class="footer"><div class="footgrid"><div><a class="brand" href="#/home" style="font-size:48px;color:white">Paris Shoes</a><p>Good shoes for wherever the day takes you. Thoughtfully made, ready to move.</p></div><div><h4>Explore</h4><a href="#/shop">Shop all</a><a href="#/shop?type=Running">Running</a><a href="#/shop?type=Trail">Trail</a><a href="#/size-guide">Size guide</a></div><div><h4>About</h4><a href="#/factories">Our factories</a><a href="#/contact">Help & contact</a><a href="#/account">Your account</a></div><div><h4>Notes from Paris Shoes</h4><p>New releases, field notes and good things.</p><form id="newsletter" class="newsletter"><input name="email" type="email" placeholder="Your email address" autocomplete="email" maxlength="254" aria-label="Email address for newsletter" required><button type="submit" aria-label="Subscribe to newsletter">↗</button></form><p class="newsletter-status" id="newsletter-status" aria-live="polite"></p></div></div><div class="footbottom"><span>© 2026 Paris Shoes</span><span>Made to move. Made to last.</span><span>Instagram · Pinterest</span></div></footer><div class="notice" id="notice"></div>';
       }
       function card(p) {
+        const id = escapeHtml(p.id), name = escapeHtml(p.n);
+        const category = escapeHtml(p.t), colorway = escapeHtml(p.c);
+        const image = p.i
+          ? '<img loading="lazy" src="' + escapeHtml(p.i) + '" alt="' + name + '">'
+          : '<div class="product-image-placeholder" aria-label="Product image coming soon">Paris Shoes</div>';
         return (
-          '<article class="product"><div class="product-img"><a href="#/product/' +
-          p.id +
-          '"><img loading="lazy" src="' +
-          p.i +
-          '" alt="' +
-          p.n +
-          '"></a><button class="heart ' +
-          (saved.includes(p.id) ? 'on' : '') +
-          '" data-save="' +
-          p.id +
-          '">' +
-          (saved.includes(p.id) ? '♥' : '♡') +
-          '</button></div><div class="meta"><div><b><a href="#/product/' +
-          p.id +
-          '">' +
-          p.n +
-          '</a></b><small>' +
-          p.t +
-          ' · ' +
-          p.c +
-          '</small></div><span>' +
-          money(p.p) +
-          '</span></div></article>'
+          '<article class="product"><div class="product-img"><a href="#/product/' + id + '">' + image + '</a><button class="heart ' +
+          (saved.includes(String(p.id)) ? 'on' : '') + '" data-save="' + id + '" aria-label="Save ' + name + '">' +
+          (saved.includes(String(p.id)) ? '♥' : '♡') + '</button></div><div class="meta"><div><b><a href="#/product/' + id + '">' +
+          name + '</a></b><small>' + category + (colorway ? ' · ' + colorway : '') + '</small></div><span>' +
+          money(p.p, p.currency) + '</span></div></article>'
         );
       }
+
       function home() {
         return (
           '<main class="home-page">' +
@@ -2728,17 +2745,17 @@
           '</div>' +
           '<div class="campaign-art"><div class="campaign-ring"></div><div class="campaign-index"><strong>01</strong> / 05</div>' +
           '<div class="campaign-stage shoe-slider" id="shoeSlider" aria-label="Featured shoes carousel" tabindex="0">' +
-          P.slice(0, 5).map((p, i) => '<div class="shoe-slide ' + (i === 0 ? 'active' : '') + '" data-shoe-slide="' + i + '" aria-hidden="' + (i !== 0) + '"><img src="/resources/hero-shoe-' + (i + 1) + '.png" alt="' + p.n + ' featured shoe"><span class="shoe-caption">' + p.n + ' · ' + p.c + '</span></div>').join('') +
+          DEMO_PRODUCTS.slice(0, 5).map((p, i) => '<div class="shoe-slide ' + (i === 0 ? 'active' : '') + '" data-shoe-slide="' + i + '" aria-hidden="' + (i !== 0) + '"><img src="/resources/hero-shoe-' + (i + 1) + '.png" alt="' + p.n + ' featured shoe"><span class="shoe-caption">' + p.n + ' · ' + p.c + '</span></div>').join('') +
           '<div class="shoe-controls"><button type="button" id="shoePrev" aria-label="Previous shoe">←</button><div class="shoe-dots">' +
-          P.slice(0, 5).map((p, i) => '<button type="button" data-shoe-dot="' + i + '" aria-label="Show ' + p.n + '" aria-current="' + (i === 0) + '"></button>').join('') +
+          DEMO_PRODUCTS.slice(0, 5).map((p, i) => '<button type="button" data-shoe-dot="' + i + '" aria-label="Show ' + p.n + '" aria-current="' + (i === 0) + '"></button>').join('') +
           '</div><button type="button" id="shoeNext" aria-label="Next shoe">→</button></div></div></div>' +
           '<div class="campaign-scroll">Scroll to discover ↓</div></section>' +
           '<div class="motion-ticker"><div class="motion-ticker-track"><span>MADE TO MOVE</span><span>MADE TO LAST</span><span>FIND YOUR PACE</span><span>MADE TO MOVE</span><span>MADE TO LAST</span><span>FIND YOUR PACE</span></div></div>' +
           '<section class="section home-featured reveal-section"><div class="head"><div><span class="eyebrow">Curated for your every day</span><h2>Meet your next<br>favourite pair.</h2></div><a class="link" href="#/shop">Shop all styles ↗</a></div><div class="products">' +
-          P.slice(0, 4).map(card).join('') +
+          P.length ? P.slice(0, 4).map(card).join('') : catalogueEmpty() +
           '</div></section>' +
           '<section class="section home-categories reveal-section" style="padding-top:0"><div class="head"><div><span class="eyebrow">Different days. Different directions.</span><h2>Find your kind of move.</h2></div></div><div class="categories">' +
-          [['Everyday', P[0]], ['Running', P[1]], ['Trail', P[2]]].map(x => '<a class="category" href="#/shop?type=' + x[0] + '"><img src="' + x[1].i + '" alt="' + x[0] + ' shoes"><b>' + x[0] + ' ↗</b></a>').join('') +
+          [['Everyday', DEMO_PRODUCTS[0]], ['Running', DEMO_PRODUCTS[1]], ['Trail', DEMO_PRODUCTS[2]]].map(x => '<a class="category" href="#/shop?type=' + x[0] + '"><img src="' + x[1].i + '" alt="' + x[0] + ' shoes"><b>' + x[0] + ' ↗</b></a>').join('') +
           '</div></section>' +
           '<section class="story home-story reveal-section"><img src="https://images.unsplash.com/photo-1520256862855-398228c41684?w=1200&q=85" alt="Craft and materials"><div class="copy"><span class="eyebrow">A better way forward</span><h2>Good things<br>take thought.</h2><p>We work with long-term partners, choose materials with care and keep asking how a shoe can do more with less. Better by design, not by slogan.</p><a class="link" href="#/factories">How we make things ↗</a></div></section>' +
           '<section class="quote home-quote reveal-section"><small>A LITTLE REMINDER</small><blockquote>“The best route is rarely the shortest. Make room for the good detours.”</blockquote><small>— THE PARIS SHOES OUTLOOK</small></section></main>'
@@ -2764,102 +2781,86 @@
                 '</label>'
             )
             .join('') +
-          '<h3>Price</h3><label><input type="checkbox" id="under"> Under $150</label><a class="link" href="#/size-guide">Size guide ↗</a></aside><div><div class="toolbar"><span>' +
+          '<h3>Price</h3><label><input type="checkbox" id="under"> Under BDT 3,000</label><a class="link" href="#/size-guide">Size guide ↗</a></aside><div><div class="toolbar"><span>' +
           list.length +
           ' styles</span><select id="sort"><option value="featured">Featured</option><option value="low" ' +
           (sort === 'low' ? 'selected' : '') +
           '>Price: low to high</option><option value="high" ' +
           (sort === 'high' ? 'selected' : '') +
           '>Price: high to low</option></select></div><div class="products" id="catalogue">' +
-          list.map(card).join('') +
+          list.length ? list.map(card).join('') : catalogueEmpty() +
           '</div></div></div></main>'
         );
       }
       function product(id) {
-        let p = P.find(x => x.id === id) || P[0];
+        const key = decodeURIComponent(String(id));
+        const p = P.find(x => String(x.id) === key || x.slug === key);
+        if (!p) return '<main class="page"><span class="eyebrow">Paris Shoes collection</span><h1 class="page-title">That pair isn’t here yet.</h1><p>The product may have been removed or is not currently published.</p><a class="link" href="#/shop">Return to the collection ↗</a></main>';
+        const variants = p.variants || [];
+        const firstAvailable = variants.find(variant => variant.available);
+        if (!variants.some(variant => variant.size === String(size) && variant.available)) size = firstAvailable ? firstAvailable.size : '';
+        const gallery = p.images || [];
+        const mainImage = gallery[0]
+          ? '<img id="productMainImage" src="' + escapeHtml(gallery[0].url) + '" alt="' + escapeHtml(gallery[0].alt) + '">'
+          : '<div class="product-image-placeholder product-image-placeholder-large">Product photography coming soon</div>';
+        const thumbnails = gallery.length > 1
+          ? '<div class="detail-thumbs">' + gallery.map((image,index) =>
+              '<button type="button" data-image-index="' + index + '" aria-label="View product image ' + (index+1) + '" aria-pressed="' + (index===0) + '"><img src="' + escapeHtml(image.url) + '" alt="' + escapeHtml(image.alt) + '"></button>'
+            ).join('') + '</div>'
+          : '';
+        const sizeButtons = variants.length
+          ? variants.map(variant =>
+              '<button class="size ' + (String(size)===variant.size && variant.available ? 'sel' : '') +
+              '" data-size="' + escapeHtml(variant.size) + '"' +
+              (variant.available ? '' : ' disabled aria-disabled="true"') + '>' + escapeHtml(variant.size) + '</button>'
+            ).join('')
+          : '<p class="form-status">Sizes are being added to this product.</p>';
         return (
-          '<main class="detail"><img src="' +
-          p.i +
-          '" alt="' +
-          p.n +
-          '"><div class="detail-info"><span class="eyebrow">' +
-          p.tag +
-          ' / ' +
-          p.t +
-          '</span><h1>' +
-          p.n +
-          '</h1><b>' +
-          money(p.p) +
-          '</b><p>' +
-          p.d +
-          '</p><p>Colour: <b>' +
-          p.c +
-          '</b></p><span class="eyebrow">Choose your size · <a href="#/size-guide">Size guide</a></span><div class="sizes">' +
-          [38, 39, 40, 41, 42, 43, 44, 45, 46, 47]
-            .map(
-              s =>
-                '<button class="size ' +
-                (size === s ? 'sel' : '') +
-                '" data-size="' +
-                s +
-                '">' +
-                s +
-                '</button>'
-            )
-            .join('') +
-          '</div><button class="btn" id="add">Add to bag · ' +
-          money(p.p) +
-          ' ↗</button><p>Free shipping over $150. Easy returns within 30 days.</p></div></main>'
+          '<main class="detail"><div class="detail-gallery">' + mainImage + thumbnails + '</div><div class="detail-info"><span class="eyebrow">' +
+          escapeHtml(p.tag || p.t) + ' / ' + escapeHtml(p.t) + '</span><h1>' + escapeHtml(p.n) + '</h1><b>' +
+          money(p.p,p.currency) + '</b><p>' + escapeHtml(p.d) + '</p>' +
+          (p.c ? '<p>Colour: <b>' + escapeHtml(p.c) + '</b></p>' : '') +
+          '<span class="eyebrow">Choose your size · <a href="#/size-guide">Size guide</a></span><div class="sizes">' + sizeButtons +
+          '</div><button class="btn" id="add"' + (firstAvailable ? '' : ' disabled') + '>' +
+          (firstAvailable ? 'Add to bag · ' + money(p.p,p.currency) + ' ↗' : 'Currently unavailable') +
+          '</button><p>Availability is shown for each size and updates when stock is changed.</p></div></main>'
         );
       }
+
       function bagPage() {
         if (!bag.length)
           return '<main class="page"><span class="eyebrow">Your selection</span><h1 class="page-title">Your bag.</h1><div class="empty">Your bag is taking a little breather.<br><br><a class="link" href="#/shop">Find something good ↗</a></div></main>';
+        const rows = bag.map((x,i) => {
+          const p = P.find(y => String(y.id) === String(x.id));
+          if (!p) return '';
+          const variant = (p.variants || []).find(v => v.size === String(x.s));
+          const image = p.i ? '<img src="' + escapeHtml(p.i) + '" alt="' + escapeHtml(p.n) + '">' : '<div class="product-image-placeholder">Paris Shoes</div>';
+          return (
+            '<div class="bagrow"><div class="bag-image-wrap">' + image + '</div><div><b>' + escapeHtml(p.n) +
+            '</b><p>' + escapeHtml(p.c) + ' · Size ' + escapeHtml(x.s) + '</p><div class="qty"><button data-qty="' + i +
+            '" data-d="-1" aria-label="Decrease quantity">−</button> ' + x.q + ' <button data-qty="' + i +
+            '" data-d="1" aria-label="Increase quantity"' + (!variant || x.q >= variant.stock ? ' disabled' : '') +
+            '>+</button> <button data-remove="' + i + '">Remove</button></div></div><b class="rowprice">' +
+            money(p.p*x.q,p.currency) + '</b></div>'
+          );
+        }).join('');
         return (
-          '<main class="page"><span class="eyebrow">Nearly yours</span><h1 class="page-title">Your bag.</h1>' +
-          bag
-            .map((x, i) => {
-              let p = P.find(y => y.id === x.id);
-              return (
-                '<div class="bagrow"><img src="' +
-                p.i +
-                '"><div><b>' +
-                p.n +
-                '</b><p>' +
-                p.c +
-                ' · Size ' +
-                x.s +
-                '</p><div class="qty"><button data-qty="' +
-                i +
-                '" data-d="-1">−</button> ' +
-                x.q +
-                ' <button data-qty="' +
-                i +
-                '" data-d="1">+</button> <button data-remove="' +
-                i +
-                '">Remove</button></div></div><b class="rowprice">' +
-                money(p.p * x.q) +
-                '</b></div>'
-              );
-            })
-            .join('') +
-          '<div class="summary"><div><span>Subtotal</span><b>' +
-          money(total()) +
-          '</b></div><div><span>Shipping</span><span>' +
-          (total() >= 150 ? 'Complimentary' : 'Calculated at checkout') +
-          '</span></div><a class="btn" href="#/checkout">Continue to checkout ↗</a></div></main>'
+          '<main class="page"><span class="eyebrow">Nearly yours</span><h1 class="page-title">Your bag.</h1>' + rows +
+          '<div class="summary"><div><span>Subtotal</span><b>' + money(total()) +
+          '</b></div><div><span>Shipping</span><span>Calculated at checkout</span></div><a class="btn" href="#/checkout">Continue to checkout ↗</a></div></main>'
         );
       }
+
       function wishlist() {
-        let list = P.filter(p => saved.includes(p.id));
+        const list = P.filter(p => saved.includes(String(p.id)));
         return (
           '<main class="page"><span class="eyebrow">Keep the good ones close</span><h1 class="page-title">Your wishlist.</h1>' +
-          (list.length
-            ? '<div class="products">' + list.map(card).join('') + '</div>'
-            : '<div class="empty">Nothing saved just yet. Tap the heart on a shoe to keep it here.<br><br><a class="link" href="#/shop">Explore the collection ↗</a></div>') +
+          (list.length ? '<div class="products">' + list.map(card).join('') + '</div>' :
+            '<div class="empty">Nothing saved just yet. Tap the heart on a shoe to keep it here.<br><br><a class="link" href="#/shop">Explore the collection ↗</a></div>') +
           '</main>'
         );
       }
+
       const pages = {
         'size-guide': [
           'A good fit changes everything',
@@ -2960,6 +2961,12 @@
           '</main>'
         );
       }
+      function contactPage() {
+        return (
+          '<main class="page"><span class="eyebrow">A note to our team</span><h1 class="page-title">Let’s talk shoes.</h1><p style="max-width:580px;line-height:1.8;color:var(--muted)">Questions about fit, materials or a product? Send us a note and it will be saved securely for the Paris Shoes team.</p><form id="contact-form" class="form contact-form" style="margin-top:30px"><input name="name" placeholder="Your name" autocomplete="name" maxlength="120" required><input name="email" type="email" placeholder="Email address" autocomplete="email" maxlength="254" required><input class="wide" name="subject" placeholder="Subject (optional)" maxlength="180"><textarea class="wide" name="message" placeholder="How can we help?" rows="6" maxlength="5000" required></textarea><button class="btn wide" type="submit">Send message ↗</button><p class="form-status wide" id="contact-status" aria-live="polite"></p></form></main>'
+        );
+      }
+
       function checkout() {
         return (
           '<main class="page"><span class="eyebrow">The last little step</span><h1 class="page-title">Checkout.</h1><div class="shop" style="margin-top:35px"><form id="checkout" class="form"><input name="name" placeholder="Full name" required><input name="email" type="email" placeholder="Email address" required><input class="wide" name="address" placeholder="Street address" required><input name="city" placeholder="City" required><input name="postal" placeholder="Postal code" required><select class="wide" required><option value="">Select country</option><option>Bangladesh</option><option>United States</option><option>United Kingdom</option></select><button class="btn wide">Place demo order ↗</button><p class="wide" style="font-size:11px;color:var(--muted)">Demo storefront: no payment is collected and no order is transmitted.</p></form><aside class="summary" style="margin:0"><h3>Order summary</h3>' +
@@ -2967,11 +2974,11 @@
             .map(
               x =>
                 '<div><span>' +
-                P.find(p => p.id === x.id).n +
+                (P.find(p => String(p.id) === String(x.id))?.n || 'Product') +
                 ' × ' +
                 x.q +
                 '</span><b>' +
-                money(P.find(p => p.id === x.id).p * x.q) +
+                money((P.find(p => String(p.id) === String(x.id))?.p || 0) * x.q, P.find(p => String(p.id) === String(x.id))?.currency || 'BDT') +
                 '</b></div>'
             )
             .join('') +
@@ -2995,7 +3002,9 @@
                       ? wishlist()
                       : r === 'checkout'
                         ? checkout()
-                        : info(r);
+                        : r === 'contact'
+                          ? contactPage()
+                          : info(r);
         $('#app').innerHTML = header() + body + footer();
         bind();
       }
@@ -3075,7 +3084,7 @@
         });
         document.querySelectorAll('[data-save]').forEach(b =>
           b.addEventListener('click', () => {
-            let id = +b.dataset.save;
+            let id = b.dataset.save;
             saved = saved.includes(id)
               ? saved.filter(x => x !== id)
               : [...saved, id];
@@ -3086,7 +3095,7 @@
         );
         document.querySelectorAll('[data-size]').forEach(b =>
           b.addEventListener('click', () => {
-            size = +b.dataset.size;
+            size = b.dataset.size;
             document
               .querySelectorAll('[data-size]')
               .forEach(x => x.classList.remove('sel'));
@@ -3094,9 +3103,13 @@
           })
         );
         $('#add')?.addEventListener('click', () => {
-          let id = +route().split('/')[1],
-            x = bag.find(x => x.id === id && x.s === size);
-          x ? x.q++ : bag.push({ id, s: size, q: 1 });
+          const id = decodeURIComponent(route().split('/')[1] || '');
+          const p = P.find(product => String(product.id) === id);
+          const variant = p?.variants?.find(item => item.size === String(size) && item.available);
+          if (!p || !variant) { notice('That size is currently unavailable'); return; }
+          const line = bag.find(item => String(item.id) === id && String(item.s) === String(size));
+          if (line && line.q >= variant.stock) { notice('No more stock is available in that size'); return; }
+          line ? line.q++ : bag.push({ id, s: String(size), q: 1 });
           persist();
           render();
           notice('Added to your bag');
@@ -3104,7 +3117,11 @@
         document.querySelectorAll('[data-qty]').forEach(b =>
           b.addEventListener('click', () => {
             let i = +b.dataset.qty;
-            bag[i].q += +b.dataset.d;
+            const change = +b.dataset.d, line = bag[i];
+            const p = P.find(product => String(product.id) === String(line?.id));
+            const variant = p?.variants?.find(item => item.size === String(line?.s));
+            if (change > 0 && (!variant || line.q >= variant.stock)) { notice('No more stock is available in that size'); return; }
+            bag[i].q += change;
             if (bag[i].q < 1) bag.splice(i, 1);
             persist();
             render();
@@ -3131,15 +3148,50 @@
         $('#under')?.addEventListener('change', e => {
           let q = e.target.checked;
           $('#catalogue').innerHTML = P.filter(
-            p => (category === 'All' || p.t === category) && (!q || p.p < 150)
+            p => (category === 'All' || p.t === category) && (!q || p.p < 3000)
           )
             .map(card)
             .join('');
           bind();
         });
-        $('#newsletter')?.addEventListener('submit', e => {
+        $('#newsletter')?.addEventListener('submit', async e => {
           e.preventDefault();
-          notice('Newsletter sign-up is coming soon');
+          const form = e.currentTarget, button = form.querySelector('button[type="submit"]');
+          if (button) button.disabled = true;
+          try {
+            const result = await storeApi.subscribeNewsletter(form.elements.email.value);
+            form.reset();
+            notice(result.alreadySubscribed ? 'You’re already on the list' : 'Thanks for subscribing');
+          } catch (error) {
+            console.error('Paris Shoes newsletter signup failed:', error);
+            notice(error.message || 'We could not save your signup. Please try again.');
+          } finally { if (button) button.disabled = false; }
+        });
+        $('#contact-form')?.addEventListener('submit', async e => {
+          e.preventDefault();
+          const form = e.currentTarget, button = form.querySelector('button[type="submit"]');
+          if (button) button.disabled = true;
+          try {
+            const fields = new FormData(form);
+            await storeApi.sendContactMessage({
+              name: fields.get('name'), email: fields.get('email'),
+              subject: fields.get('subject'), message: fields.get('message'),
+            });
+            form.reset();
+            notice('Your message has been sent to our team');
+          } catch (error) {
+            console.error('Paris Shoes contact submission failed:', error);
+            notice(error.message || 'We could not send your message. Please try again.');
+          } finally { if (button) button.disabled = false; }
+        });
+        document.querySelectorAll('[data-image-index]').forEach(button => {
+          button.addEventListener('click', () => {
+            const p = P.find(item => String(item.id) === decodeURIComponent(route().split('/')[1] || ''));
+            const image = p?.images?.[Number(button.dataset.imageIndex)], main = $('#productMainImage');
+            if (!image || !main) return;
+            main.src = image.url; main.alt = image.alt;
+            document.querySelectorAll('[data-image-index]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+          });
         });
         $('#checkout')?.addEventListener('submit', e => {
           e.preventDefault();
@@ -3154,7 +3206,33 @@
         menu = false;
         render();
       });
-      render();
+      async function loadCatalogue() {
+        try {
+          if (!storeApi.configured) throw new Error('The Paris Shoes catalogue service is not configured.');
+          P = await storeApi.getProducts();
+          catalogueReady = true;
+          catalogueMessage = '';
+        } catch (error) {
+          P = [];
+          catalogueReady = false;
+          catalogueMessage = 'The collection could not be loaded right now. Please try again shortly.';
+          console.error('Paris Shoes catalogue request failed:', error);
+        }
+        const activeIds = new Set(P.map(product => String(product.id)));
+        bag = bag.filter(item => activeIds.has(String(item.id)) && Number(item.q) > 0);
+        saved = saved.filter(id => activeIds.has(String(id)));
+        persist();
+        render();
+      }
+
+      function catalogueEmpty() {
+        const message = catalogueMessage || (catalogueReady
+          ? 'The first collection is being prepared. Please check back soon.'
+          : 'Connecting to the Paris Shoes collection…');
+        return '<p class="catalogue-empty">' + escapeHtml(message) + '</p>';
+      }
+
+      loadCatalogue();
     </script>
   </body>
 </html>
