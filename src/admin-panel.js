@@ -339,19 +339,27 @@ root.addEventListener('click', async event => {
   const viewButton = event.target.closest('[data-view]');
   if (viewButton) { goto(viewButton.dataset.view); return; }
   if (event.target.closest('#ad-signout')) { await signOut(); return; }
-  const statusButton = event.target.closest('[data-save-order-status]');
-  if (statusButton) {
-    const orderId = statusButton.dataset.saveOrderStatus;
+  const orderSaveButton = event.target.closest('[data-save-order]');
+  if (orderSaveButton) {
+    const orderId = orderSaveButton.dataset.saveOrder;
     const select = root.querySelector('[data-order-status="' + CSS.escape(orderId) + '"]');
+    const feeInput = root.querySelector('[data-order-shipping-fee="' + CSS.escape(orderId) + '"]');
+    const order = data.orders.find(item => String(item.id) === String(orderId));
     const allowed = ['pending','confirmed','processing','shipped','delivered','cancelled','returned'];
-    if (!select || !allowed.includes(select.value)) return;
-    statusButton.disabled = true;
+    const fee = Number(feeInput?.value);
+    if (!select || !feeInput || !order || !allowed.includes(select.value) || !Number.isFinite(fee) || fee < 0 || fee > 10000 || !Number.isInteger(fee)) {
+      notify('Enter a valid whole-number delivery fee from 0 to 10,000 BDT.', true);
+      return;
+    }
+    orderSaveButton.disabled = true;
     try {
-      await api('orders?id=eq.' + encodeURIComponent(orderId), { method: 'PATCH', body: JSON.stringify({ order_status: select.value, updated_at: new Date().toISOString() }) });
+      await api('orders?id=eq.' + encodeURIComponent(orderId), { method: 'PATCH', body: JSON.stringify({
+        order_status: select.value, shipping_fee: fee, total: Number(order.subtotal) + fee, updated_at: new Date().toISOString()
+      }) });
       await loadData();
-      notify('Order status updated and recorded.');
-    } catch (error) { notify(error.message || 'Could not update order status.', true); }
-    finally { statusButton.disabled = false; }
+      notify('Order status and COD delivery amount updated.');
+    } catch (error) { notify(error.message || 'Could not update order.', true); }
+    finally { orderSaveButton.disabled = false; }
     return;
   }
 
