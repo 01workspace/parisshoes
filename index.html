@@ -2684,9 +2684,14 @@
     <script type="module">
       import { createStoreApi } from '/src/store-api.js';
       import { filterCatalog, getRecentlyViewed } from '/src/storefront-ux.js';
+      import { initializeAnalytics } from '/src/analytics.js';
       const storeApi = createStoreApi({
         supabaseUrl: import.meta.env.VITE_SUPABASE_URL,
         publishableKey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+      });
+      const analytics = initializeAnalytics({
+        ga4Id: import.meta.env.VITE_GA4_MEASUREMENT_ID,
+        metaPixelId: import.meta.env.VITE_META_PIXEL_ID,
       });
       const DEMO_PRODUCTS = [
         {
@@ -3152,6 +3157,7 @@
           '<main class="page"><span class="eyebrow">The last little step</span><h1 class="page-title">Checkout.</h1><p style="max-width:620px;color:var(--muted);line-height:1.7">Complete your delivery details. Paris Shoes currently accepts Cash on Delivery. Our team will confirm courier charges before dispatch.</p><div class="shop" style="margin-top:35px"><form id="checkout" class="form"><input name="name" placeholder="Full name" autocomplete="name" maxlength="120" required><input name="email" type="email" placeholder="Email address" autocomplete="email" maxlength="254" required><input name="phone" type="tel" placeholder="Bangladesh mobile number (01XXXXXXXXX)" autocomplete="tel" inputmode="tel" maxlength="16" required><input class="wide" name="address" placeholder="House, road and area" autocomplete="street-address" maxlength="500" required><input name="district" placeholder="District" maxlength="100" required><input name="city" placeholder="City / Upazila" maxlength="100" required><input name="postal_code" placeholder="Postal code (optional)" autocomplete="postal-code" maxlength="20"><textarea class="wide" name="notes" placeholder="Delivery notes (optional)" rows="3" maxlength="1000"></textarea><label class="wide" style="display:flex;gap:10px;align-items:center"><input type="radio" name="payment_method" value="cod" checked required> Cash on Delivery</label><button class="btn wide" type="submit">Place order ↗</button><p class="form-status wide" id="checkout-status" aria-live="polite"></p><p class="wide" style="font-size:12px;color:var(--muted)">No online payment is collected. Please provide a reachable phone number so our team can confirm your order.</p></form><aside class="summary" style="margin:0"><h3>Order summary</h3>' + lines + '<div><span>Subtotal</span><b>' + money(total()) + '</b></div><div><span>Delivery</span><span>Confirmed before dispatch</span></div><div><b>Cash on Delivery</b><b>Subtotal + delivery</b></div></aside></div></main>'
         );
       }
+      let lastTrackedRoute = null;
       function render() {
         let r = route(),
           body =
@@ -3172,6 +3178,15 @@
                           : info(r);
         $('#app').innerHTML = header() + body + footer() + '<div class="overlay" id="quickView" hidden></div><div class="overlay image-lightbox" id="imageLightbox" hidden role="dialog" aria-modal="true" aria-label="Product image preview"><button class="overlay-close" type="button" data-close-overlay aria-label="Close image preview">×</button><img id="lightboxImage" alt=""></div>';
         bind();
+        if (r !== lastTrackedRoute) {
+          lastTrackedRoute = r;
+          analytics.track('page_view', { page_path: window.location.pathname + window.location.hash, page_title: document.title });
+          if (r.startsWith('product/')) {
+            const viewed = P.find(item => String(item.id) === decodeURIComponent(r.split('/')[1] || ''));
+            if (viewed) analytics.track('view_item', { currency: viewed.currency || 'BDT', value: viewed.p, items: [{ item_id: viewed.id, item_name: viewed.n, item_category: viewed.t }] });
+          }
+          if (r === 'checkout' && bag.length) analytics.track('begin_checkout', { currency: 'BDT', value: total(), items: bag.map(line => { const item = P.find(product => String(product.id) === String(line.id)); return { item_id: line.id, item_name: item?.n || 'Shoe', item_category: item?.t, item_variant: line.s, price: item?.p, quantity: line.q }; }) });
+        }
       }
       let shoeTimer = null;
       function initShoeSlider() {
@@ -3272,6 +3287,7 @@
           const line = bag.find(item => String(item.id) === id && String(item.s) === String(size));
           if (line && line.q >= variant.stock) { notice('No more stock is available in that size'); return; }
           line ? line.q++ : bag.push({ id, s: String(size), q: 1 });
+          analytics.track('add_to_cart', { currency: p.currency || 'BDT', value: p.p, items: [{ item_id: p.id, item_name: p.n, item_category: p.t, item_variant: String(size), price: p.p, quantity: 1 }] });
           persist();
           render();
           notice('Added to your bag');
@@ -3381,6 +3397,7 @@
               idempotencyKey: pending.idempotencyKey,
               accessToken: pending.accessToken,
             });
+            analytics.track('purchase', { transaction_id: lastOrder.order_number, currency: lastOrder.currency || 'BDT', value: Number(lastOrder.total || lastOrder.subtotal || 0), items: bag.map(line => { const item = P.find(product => String(product.id) === String(line.id)); return { item_id: line.id, item_name: item?.n || 'Shoe', item_category: item?.t, item_variant: line.s, price: item?.p, quantity: line.q }; }) });
             sessionStorage.removeItem('parisPendingCheckout');
             bag = [];
             persist();
@@ -3397,7 +3414,7 @@
         const close = event.target.closest('[data-close-overlay]'); if (close) { close.closest('.overlay').hidden = true; document.body.classList.remove('overlay-open'); return; }
         const quick = event.target.closest('[data-quick-view]'); if (quick) { openQuickView(quick.dataset.quickView); return; }
         const qs = event.target.closest('[data-quick-size]'); if (qs) { quickViewSize = qs.dataset.quickSize; $('#quickView').querySelectorAll('[data-quick-size]').forEach(item => item.classList.toggle('sel', item === qs)); return; }
-        const qa = event.target.closest('[data-quick-add]'); if (qa) { const p = P.find(item => String(item.id) === quickViewId); const v = p?.variants?.find(item => item.size === quickViewSize && item.available); const line = bag.find(item => String(item.id) === quickViewId && item.s === quickViewSize); if (!v || (line && line.q >= v.stock)) { notice('That size is unavailable'); return; } line ? line.q++ : bag.push({ id: quickViewId, s: quickViewSize, q: 1 }); persist(); $('#quickView').hidden = true; document.body.classList.remove('overlay-open'); render(); notice('Added to your bag'); return; }
+        const qa = event.target.closest('[data-quick-add]'); if (qa) { const p = P.find(item => String(item.id) === quickViewId); const v = p?.variants?.find(item => item.size === quickViewSize && item.available); const line = bag.find(item => String(item.id) === quickViewId && item.s === quickViewSize); if (!v || (line && line.q >= v.stock)) { notice('That size is unavailable'); return; } line ? line.q++ : bag.push({ id: quickViewId, s: quickViewSize, q: 1 }); analytics.track('add_to_cart', { currency: p.currency || 'BDT', value: p.p, items: [{ item_id: p.id, item_name: p.n, item_category: p.t, item_variant: quickViewSize, price: p.p, quantity: 1 }] }); persist(); $('#quickView').hidden = true; document.body.classList.remove('overlay-open'); render(); notice('Added to your bag'); return; }
         const button = event.target.closest('[data-save]');
         if (!button) return;
         const id = button.dataset.save;
