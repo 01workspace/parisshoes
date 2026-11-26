@@ -4,6 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Paris Shoes — Everyday Sneakers, Runners & Trail Shoes</title>
+    <meta name="description" content="Discover everyday sneakers, lightweight runners and trail shoes from Paris Shoes. Find your pair and move your way." />
+    <meta name="theme-color" content="#f5f3ee" />
+    <link rel="canonical" href="https://parisshoes.vercel.app/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Paris Shoes" />
+    <meta property="og:title" content="Paris Shoes — Move your way." />
+    <meta property="og:description" content="Everyday sneakers, lightweight runners and trail shoes. Find your pair and move your way." />
+    <meta property="og:url" content="https://parisshoes.vercel.app/" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Paris Shoes — Move your way." />
+    <meta name="twitter:description" content="Everyday sneakers, lightweight runners and trail shoes. Find your pair and move your way." />
     
     <style>
       /* Generated using AppDeploy UI skill */
@@ -2675,7 +2686,7 @@
         );
       }
       function footer() {
-        return '<footer class="footer"><div class="footgrid"><div><a class="brand" href="#/home" style="font-size:48px;color:white">Paris Shoes</a><p>Good shoes for wherever the day takes you. Thoughtfully made, ready to move.</p></div><div><h4>Explore</h4><a href="#/shop">Shop all</a><a href="#/shop?type=Running">Running</a><a href="#/shop?type=Trail">Trail</a><a href="#/size-guide">Size guide</a></div><div><h4>About</h4><a href="#/factories">Our factories</a><a href="#/help">Help & contact</a><a href="#/account">Your account</a></div><div><h4>Notes from Paris Shoes</h4><p>New releases, field notes and good things. No noise.</p><form class="newsletter" id="newsletter"><input type="email" placeholder="Your email address" required><button>↗</button></form></div></div><div class="footbottom"><span>© 2026 Paris Shoes</span><span>Made to move. Made to last.</span><span>Instagram · Pinterest</span></div></footer><div class="notice" id="notice"></div>';
+        return '<footer class="footer"><div class="footgrid"><div><a class="brand" href="#/home" style="font-size:48px;color:white">Paris Shoes</a><p>Good shoes for wherever the day takes you. Thoughtfully made, ready to move.</p></div><div><h4>Explore</h4><a href="#/shop">Shop all</a><a href="#/shop?type=Running">Running</a><a href="#/shop?type=Trail">Trail</a><a href="#/size-guide">Size guide</a></div><div><h4>About</h4><a href="#/factories">Our factories</a><a href="#/help">Help & contact</a><a href="#/account">Your account</a></div><div><h4>Notes from Paris Shoes</h4><p>New releases, field notes and good things. Newsletter sign-up is coming soon.</p></div></div><div class="footbottom"><span>© 2026 Paris Shoes</span><span>Made to move. Made to last.</span><span>Instagram · Pinterest</span></div></footer><div class="notice" id="notice"></div>';
       }
       function card(p) {
         return (
@@ -2895,15 +2906,15 @@
           [
             [
               'Shipping',
-              'Complimentary standard shipping on orders over $150. Delivery estimates are shown at checkout.',
+              'Shipping options and delivery estimates will be published when ordering is enabled.',
             ],
             [
               'Returns',
-              'Unworn shoes can be returned within 30 days of delivery in original packaging.',
+              'Our return window and eligibility details will be published before orders open.',
             ],
             [
               'Contact',
-              'Write to hello@parisshoes.example and include your order number if you have one.',
+              'Customer support contact details will be published before orders open.',
             ],
           ],
         ],
@@ -3128,8 +3139,7 @@
         });
         $('#newsletter')?.addEventListener('submit', e => {
           e.preventDefault();
-          notice('Thanks for joining the Paris Shoes list');
-          e.target.reset();
+          notice('Newsletter sign-up is coming soon');
         });
         $('#checkout')?.addEventListener('submit', e => {
           e.preventDefault();
