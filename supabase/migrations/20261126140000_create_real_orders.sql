@@ -155,8 +155,8 @@ begin
   v_note := nullif(btrim(coalesce(v_customer->>'notes','')), '');
 
   if length(v_name) < 2 or length(v_name) > 120
-     or v_email !~* '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$' or length(v_email) > 254
-     or v_phone !~ '^(?:\\+?88)?01[3-9][0-9]{8}$'
+     or v_email !~* '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$' or length(v_email) > 254
+     or v_phone !~ '^(?:\+?88)?01[3-9][0-9]{8}$'
      or length(v_address) < 8 or length(v_address) > 500
      or length(v_district) < 2 or length(v_district) > 100
      or length(v_city) < 2 or length(v_city) > 100
