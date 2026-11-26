@@ -199,7 +199,7 @@ begin
       'unit_price', v_product.price, 'quantity', v_qty, 'line_total', v_product.price * v_qty
     ));
     update public.product_variants
-    set stock_quantity = stock_quantity - v_qty, is_available = (stock_quantity - v_qty) > 0, updated_at = now()
+    set stock_quantity = stock_quantity - v_qty, updated_at = now()
     where id = v_variant.id;
   end loop;
 
