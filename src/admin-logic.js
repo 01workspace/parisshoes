@@ -18,7 +18,7 @@ export function summarizeAdminData({ products = [], messages = [], subscribers =
 }
 
 function toImageUrls(value) {
-  const values = Array.isArray(value) ? value : String(value ?? '').split(/[\n,]+/);
+  const values = Array.isArray(value) ? value : String(value ?? '').split(/\r?\n/);
   const urls = [...new Set(values.map(item => clean(item)).filter(Boolean))];
   for (const url of urls) {
     if (url.startsWith('/')) continue;
