@@ -39,4 +39,4 @@ Payment processing, order submission/management, and customer authentication rem
 
 ## Database migration
 
-The schema hardening migration is applied to the dedicated Supabase project as `paris_shoes_storefront_backend`. It adds product presentation fields, unique product-size pairs, timestamp triggers, the public product image bucket, and least-privilege grants. The remote schema has been applied directly in Supabase; a checked-in CLI migration file still needs to be generated when the Supabase CLI is available so local migration history can be reconciled.
+The schema hardening migration is applied to the dedicated Supabase project as `paris_shoes_storefront_backend`. It adds product presentation fields, unique product-size pairs, timestamp triggers, the public product image bucket, and least-privilege grants. The checked-in `supabase/migrations/` files now match the three versions listed in the live Supabase migration history. The baseline migration recreates the five data tables and their RLS policies; follow-up migrations add product fields, timestamps, the product image bucket, least-privilege grants, and remove one redundant index.
