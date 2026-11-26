@@ -2627,6 +2627,17 @@
       @media (max-width:900px) { .filter-drawer { grid-column:1/-1; } .filter-drawer>summary { display:block; padding:13px 0; border-block:1px solid var(--line); font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; } .shop { grid-template-columns:1fr; gap:16px; } .filters { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px 12px; padding:14px 0; } .filters h3 { grid-column:1/-1; margin:9px 0 0; } .toolbar { display:grid; grid-template-columns:1fr 1fr; gap:10px; align-items:center; } .toolbar input,.toolbar select { min-width:0; width:100%; } }
       @media (max-width:640px) { .quick-view-panel { grid-template-columns:1fr; gap:14px; padding:18px; max-height:92svh; } .quick-view-image { min-height:220px; } .quick-view-image img { max-height:260px; } .quick-view-copy { padding:4px 0 10px; } .filters { grid-template-columns:1fr 1fr; } .filters .filter-clear,.filters a { grid-column:1/-1; } .detail-zoom img { max-height:420px; } }
 
+    
+      .related-section { padding-top: 12px; }
+      .fit-note a { border-bottom: 1px solid; }
+      .size-chart-wrap { margin: 36px 0; max-width: 760px; }
+      .size-chart-wrap p { color: var(--muted); font-size: 13px; line-height: 1.6; }
+      .size-chart-scroll { overflow-x:auto; }
+      .size-chart { width:100%; border-collapse:collapse; font-size:13px; text-align:left; }
+      .size-chart th,.size-chart td { padding:11px 13px; border-bottom:1px solid var(--line); white-space:nowrap; }
+      .size-chart th { font-size:10px; letter-spacing:.1em; text-transform:uppercase; }
+      @media(max-width:640px) { .size-chart { font-size:11px; } .size-chart th,.size-chart td { padding:9px 8px; } }
+
     </style>
   </head>
   <body>
@@ -2935,8 +2946,15 @@
           '<span class="eyebrow">Choose your size · <a href="#/size-guide">Size guide</a></span><div class="sizes">' + sizeButtons +
           '</div><button class="btn" id="add"' + (firstAvailable ? '' : ' disabled') + '>' +
           (firstAvailable ? 'Add to bag · ' + money(p.p,p.currency) + ' ↗' : 'Currently unavailable') +
-          '</button><p>Availability is shown for each size and updates when stock is changed.</p></div></main>'
+          '</button><p>Availability is shown for each size and updates when stock is changed.</p><p class="fit-note">Need help choosing? <a href="#/size-guide">Read our fit guide ↗</a></p></div></main>' + relatedProducts(p)
         );
+      }
+
+      function relatedProducts(current) {
+        const viewed = recentlyViewed.map(id => P.find(item => String(item.id) === String(id))).filter(item => item && String(item.id) !== String(current.id));
+        const matching = P.filter(item => String(item.id) !== String(current.id) && (item.t === current.t || item.audience === current.audience));
+        const picks = [...new Map([...matching, ...viewed].map(item => [String(item.id), item])).values()].slice(0,4);
+        return picks.length ? '<section class="section related-section"><div class="head"><div><span class="eyebrow">A few good matches</span><h2>You may also like.</h2></div><a class="link" href="#/shop">Shop all ↗</a></div><div class="products">' + picks.map(card).join('') + '</div></section>' : '';
       }
 
       function bagPage() {
@@ -2977,7 +2995,7 @@
         'size-guide': [
           'A good fit changes everything',
           'Find your fit.',
-          'Our shoes are designed around a comfortable, everyday fit. Use this guide as a starting point, and get in touch if you are between sizes.',
+          'Measure both feet while standing, from heel to the tip of the longest toe. Use the larger measurement. This indicative EU chart is a starting point; fit can vary by shoe shape.',
           [
             [
               'Measure at home',
@@ -2985,7 +3003,7 @@
             ],
             [
               'Between sizes?',
-              'For a closer fit, consider the smaller size. If you prefer extra room or wear thicker socks, size up.',
+              'If you are between sizes, consider the larger size for extra toe room. Sock thickness and shoe shape can change the feel.',
             ],
             [
               'Still unsure?',
@@ -3019,15 +3037,15 @@
           [
             [
               'Shipping',
-              'Shipping options and delivery estimates will be published when ordering is enabled.',
+              'Delivery availability, charges and estimated arrival depend on your delivery area. Confirmed details will be shown before real orders open.',
             ],
             [
               'Returns',
-              'Our return window and eligibility details will be published before orders open.',
+              'If a size is not right, contact our team before sending anything back. Exchange eligibility, time limits and return instructions will be published before real ordering opens.',
             ],
             [
               'Contact',
-              'Use the contact form to leave a message for the Paris Shoes team; messages are stored securely for review.',
+              'Need help choosing a size, checking a product or understanding delivery? Send our team a message and include the product name where possible.',
             ],
           ],
         ],
@@ -3067,6 +3085,7 @@
             )
             .join('') +
           '</div>' +
+          (k === 'size-guide' ? '<section class="size-chart-wrap"><h2>Indicative EU size chart</h2><p>Measure from heel to longest toe. Measurements are approximate; always consider the individual shoe fit.</p><div class="size-chart-scroll"><table class="size-chart"><thead><tr><th>EU</th><th>Foot length</th><th>Range</th></tr></thead><tbody>' + [['26','16.0 cm','Kids'],['27','16.7 cm','Kids'],['28','17.3 cm','Kids'],['29','18.0 cm','Kids'],['30','18.7 cm','Kids'],['31','19.3 cm','Kids'],['32','20.0 cm','Kids'],['33','20.7 cm','Kids'],['34','21.3 cm','Kids'],['35','22.0 cm','Kids'],['36','22.5 cm','Adult'],['37','23.0 cm','Adult'],['38','23.5 cm','Adult'],['39','24.5 cm','Adult'],['40','25.0 cm','Adult'],['41','25.5 cm','Adult'],['42','26.0 cm','Adult'],['43','27.0 cm','Adult'],['44','27.5 cm','Adult'],['45','28.0 cm','Adult'],['46','29.0 cm','Adult']].map(row => '<tr>' + row.map(cell => '<td>' + cell + '</td>').join('') + '</tr>').join('') + '</tbody></table></div></section>' : '') +
           (k === 'account'
             ? '<p><a class="btn" href="#/wishlist">View wishlist ↗</a></p>'
             : k === 'help'
