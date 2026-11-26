@@ -26,6 +26,7 @@ test('normalizes database product, ordered gallery images, and in-stock variants
   });
   assert.equal(product.id, 'product-uuid');
   assert.equal(product.p, 2450);
+  assert.equal(normalizeProduct({ id: 'fallback', name: 'Fallback', currency: 'not-a-currency' }).currency, 'BDT');
   assert.equal(product.i, '/one.jpg');
   assert.deepEqual(product.images.map(image => image.url), ['/one.jpg', '/two.jpg']);
   assert.deepEqual(product.variants.map(variant => variant.available), [true, false]);
@@ -42,6 +43,7 @@ test('fetches active products with related images and stock using the publishabl
   assert.match(request.url, /products\?select=/);
   assert.match(request.url, /product_images/);
   assert.match(request.url, /product_variants/);
+  assert.match(request.url, /order=is_featured.desc/);
   assert.equal(request.options.headers.apikey, 'sb_publishable_test');
   assert.equal(request.options.headers.Authorization, 'Bearer sb_publishable_test');
 });
