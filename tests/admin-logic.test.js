@@ -42,7 +42,7 @@ test('normalises a product draft and deduplicates size labels', () => {
 test('rejects unsafe image URLs, excessive galleries and invalid product values', () => {
   assert.throws(() => normalizeProductDraft({ name:'Shoe', audience:'men', category:'Sneakers', price:100, imageUrls:'javascript:alert(1)' }), /HTTPS or a local path/i);
   assert.throws(() => normalizeProductDraft({ name:'Shoe', audience:'men', category:'Sneakers', price:-1 }), /valid BDT price/i);
-  assert.throws(() => normalizeProductDraft({ name:'Shoe', audience:'men', category:'Sneakers', price:100, imageUrls:Array(9).fill('/shoe.webp') }), /at most 8/i);
+  assert.throws(() => normalizeProductDraft({ name:'Shoe', audience:'men', category:'Sneakers', price:100, imageUrls:Array.from({ length: 9 }, (_, i) => '/shoe-' + i + '.webp') }), /at most 8/i);
 });
 
 test('validates inventory as a bounded whole number', () => {
