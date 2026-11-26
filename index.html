@@ -3178,7 +3178,7 @@
               subject: fields.get('subject'), message: fields.get('message'),
             });
             form.reset();
-            notice('Your message has been sent to our team');
+            notice('Your message was saved for our team');
           } catch (error) {
             console.error('Paris Shoes contact submission failed:', error);
             notice(error.message || 'We could not send your message. Please try again.');
