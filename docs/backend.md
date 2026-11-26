@@ -16,12 +16,12 @@ For local development, copy `.env.example` to `.env.local` and fill the publisha
 The public catalogue is driven by active rows in `public.products`. Related gallery images and size/inventory rows are stored in `public.product_images` and `public.product_variants`.
 
 1. Open the Paris Shoes project in Supabase Studio.
-2. Add a product in `products` with a unique slug, name, category, price, currency, colorway, badge, description and set `is_active = true` only when it is ready to publish.
+2. Add a product in `products` with a unique slug, name, audience (`men`, `women`, `kids` or `unisex`), category, price, currency, colorway, badge, description and set `is_active = true` only when it is ready to publish.
 3. Upload product photos to the `product-images` Storage bucket. Copy each public object URL into `product_images.image_url`, set meaningful `alt_text`, and use `position` starting at 0. The storefront displays gallery images in position order.
 4. Add one `product_variants` row per size and set `stock_quantity`. Availability is generated from stock; the storefront disables sizes without stock.
 5. Use `is_featured` and `sort_order` to control homepage placement.
 
-The current database is intentionally empty: the existing sample shoe tiles are creative placeholders, not confirmed inventory. Do not publish them as sellable products. Add the real product catalogue and images before opening product sales.
+The database is preloaded with 18 clearly labelled DEMO products across Men, Women and Kids, 18 image records using the original Paris Shoes campaign images in `public/resources/`, and 114 size/stock variants. These are demonstration catalogue entries only, not confirmed live inventory. Replace product names, descriptions, prices, images, sizes and stock with the owner's real catalogue before opening sales.
 
 ## Forms and privacy
 
@@ -39,4 +39,4 @@ Payment processing, order submission/management, and customer authentication rem
 
 ## Database migration
 
-The schema hardening migration is applied to the dedicated Supabase project as `paris_shoes_storefront_backend`. It adds product presentation fields, unique product-size pairs, timestamp triggers, the public product image bucket, and least-privilege grants. The checked-in `supabase/migrations/` files now match the three versions listed in the live Supabase migration history. The baseline migration recreates the five data tables and their RLS policies; follow-up migrations add product fields, timestamps, the product image bucket, least-privilege grants, and remove one redundant index.
+The schema hardening migration is applied to the dedicated Supabase project as `paris_shoes_storefront_backend`. It adds product presentation fields, unique product-size pairs, timestamp triggers, the public product image bucket, and least-privilege grants. The checked-in `supabase/migrations/` files now match the live Supabase migration history. The baseline migration recreates the five data tables and their RLS policies; follow-up migrations add product fields, timestamps, the product image bucket, least-privilege grants, and remove one redundant index.
