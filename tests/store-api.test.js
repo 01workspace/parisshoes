@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createStoreApi, normalizeProduct } from '../src/store-api.js';
+import { createStoreApi, filterProducts, normalizeProduct } from '../src/store-api.js';
 
 function response(body, status = 200) {
   return {
@@ -12,7 +12,7 @@ function response(body, status = 200) {
 
 test('normalizes database product, ordered gallery images, and in-stock variants', () => {
   const product = normalizeProduct({
-    id: 'product-uuid', slug: 'metro-runner', name: 'Metro Runner', description: 'Daily miles',
+    id: 'product-uuid', slug: 'metro-runner', name: 'Metro Runner', description: 'Daily miles', audience: 'men',
     category: 'Running', price: '2450.00', currency: 'BDT', colorway: 'Stone / Ink', badge: 'NEW',
     product_images: [
       { id: 'img-2', image_url: '/two.jpg', alt_text: 'Side', position: 2 },
@@ -26,6 +26,7 @@ test('normalizes database product, ordered gallery images, and in-stock variants
   });
   assert.equal(product.id, 'product-uuid');
   assert.equal(product.p, 2450);
+  assert.equal(product.audience, 'men');
   assert.equal(normalizeProduct({ id: 'fallback', name: 'Fallback', currency: 'not-a-currency' }).currency, 'BDT');
   assert.equal(product.i, '/one.jpg');
   assert.deepEqual(product.images.map(image => image.url), ['/one.jpg', '/two.jpg']);
@@ -43,6 +44,7 @@ test('fetches active products with related images and stock using the publishabl
   assert.match(request.url, /products\?select=/);
   assert.match(request.url, /product_images/);
   assert.match(request.url, /product_variants/);
+  assert.match(request.url, /audience/);
   assert.match(request.url, /order=is_featured.desc/);
   assert.equal(request.options.headers.apikey, 'sb_publishable_test');
   assert.equal(request.options.headers.Authorization, 'Bearer sb_publishable_test');
@@ -80,4 +82,28 @@ test('validates and inserts bounded contact messages', async () => {
   await api.sendContactMessage({ name: '  Paris Shopper ', email: ' USER@EXAMPLE.COM ', subject: 'Fit', message: '  Need size guidance. ' });
   assert.deepEqual(inserted, { name: 'Paris Shopper', email: 'user@example.com', subject: 'Fit', message: 'Need size guidance.' });
   await assert.rejects(() => api.sendContactMessage({ name: 'x', email: 'bad', message: 'hello' }), /valid name and email/i);
+});
+
+
+test('filters the catalogue by audience and product category', () => {
+  const products = [
+    { id: 'm1', audience: 'men', t: 'Sneakers', n: 'City Knit Runner', c: 'Black' },
+    { id: 'm2', audience: 'men', t: 'Formal', n: 'Classic Derby', c: 'Brown' },
+    { id: 'w1', audience: 'women', t: 'Sneakers', n: 'Cloud Court', c: 'White' },
+    { id: 'k1', audience: 'kids', t: 'School Shoes', n: 'Little Scholar', c: 'Black' },
+  ];
+  assert.deepEqual(filterProducts(products, { audience: 'women' }).map(product => product.id), ['w1']);
+  assert.deepEqual(filterProducts(products, { category: 'Sneakers' }).map(product => product.id), ['m1', 'w1']);
+  assert.deepEqual(filterProducts(products, { audience: 'men', category: 'Formal' }).map(product => product.id), ['m2']);
+});
+
+test('searches product name, category and colourway without case sensitivity', () => {
+  const products = [
+    { id: '1', audience: 'men', t: 'Running', n: 'Metro Runner', c: 'Cloud / Silver' },
+    { id: '2', audience: 'women', t: 'Flats', n: 'Sunday Flat', c: 'Soft Rose' },
+    { id: '3', audience: 'kids', t: 'School Shoes', n: 'Little Scholar', c: 'Navy' },
+  ];
+  assert.deepEqual(filterProducts(products, { search: 'SILVER' }).map(product => product.id), ['1']);
+  assert.deepEqual(filterProducts(products, { search: 'school' }).map(product => product.id), ['3']);
+  assert.deepEqual(filterProducts(products, { search: '  sunday ' }).map(product => product.id), ['2']);
 });
