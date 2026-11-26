@@ -2915,7 +2915,7 @@
             ],
             [
               'Contact',
-              'Customer support contact details will be published before orders open.',
+              'Use the contact form to leave a message for the Paris Shoes team; messages are stored securely for review.',
             ],
           ],
         ],
@@ -2957,7 +2957,9 @@
           '</div>' +
           (k === 'account'
             ? '<p><a class="btn" href="#/wishlist">View wishlist ↗</a></p>'
-            : '') +
+            : k === 'help'
+              ? '<p><a class="btn" href="#/contact">Contact the team ↗</a></p>'
+              : '') +
           '</main>'
         );
       }
