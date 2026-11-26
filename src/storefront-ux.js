@@ -21,7 +21,7 @@ export function filterCatalog(products, {
     if (color && !text(product.c).includes(text(color))) return false;
     if (size) {
       const matchingSize = (product.variants || []).some(variant =>
-        String(variant.size) === String(size) && (!inStock || variant.available)
+        String(variant.size) === String(size) && variant.available
       );
       if (!matchingSize) return false;
     }
