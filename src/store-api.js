@@ -94,7 +94,7 @@ export function createStoreApi({
   const key = clean(publishableKey);
   const configured = Boolean(baseUrl && key);
 
-  async function request(table, { method = 'GET', query = '', body } = {}) {
+  async function request(table, { method = 'GET', query = '', body, prefer = 'return=minimal' } = {}) {
     if (!configured) throw new Error('The Paris Shoes catalogue service is not configured.');
     if (typeof fetchImpl !== 'function') throw new Error('This browser does not support secure network requests.');
 
@@ -105,7 +105,7 @@ export function createStoreApi({
         Authorization: `Bearer ${key}`,
         Accept: 'application/json',
         ...(body ? { 'Content-Type': 'application/json' } : {}),
-        ...(body ? { Prefer: 'return=minimal' } : {}),
+        ...(body ? { Prefer: prefer } : {}),
       },
       ...(body ? { body: JSON.stringify(body) } : {}),
     });
@@ -146,6 +146,68 @@ export function createStoreApi({
         if (error.status === 409 || error.code === '23505') return { alreadySubscribed: true };
         throw error;
       }
+    },
+
+    async placeOrder(input = {}, options = {}) {
+      const customerInput = input.customer || {};
+      const customer = {
+        name: clean(customerInput.name),
+        email: clean(customerInput.email).toLowerCase(),
+        phone: clean(customerInput.phone).replace(/[\s-]/g, ''),
+        address: clean(customerInput.address),
+        district: clean(customerInput.district),
+        city: clean(customerInput.city),
+        postal_code: clean(customerInput.postal_code),
+        notes: clean(customerInput.notes),
+      };
+      if (customer.name.length < 2 || customer.name.length > 120 ||
+          !EMAIL_PATTERN.test(customer.email) || customer.email.length > 254) {
+        throw new Error('Please enter a valid name and email address.');
+      }
+      if (!/^(?:\+?88)?01[3-9]\d{8}$/.test(customer.phone)) {
+        throw new Error('Please enter a valid Bangladesh mobile number.');
+      }
+      if (customer.address.length < 8 || customer.address.length > 500 ||
+          customer.district.length < 2 || customer.district.length > 100 ||
+          customer.city.length < 2 || customer.city.length > 100 ||
+          customer.postal_code.length > 20 || customer.notes.length > 1000) {
+        throw new Error('Please check your delivery address and optional notes.');
+      }
+      if (input.payment_method !== 'cod') {
+        throw new Error('Cash on Delivery is the only available payment method right now.');
+      }
+      if (!Array.isArray(input.items) || input.items.length < 1 || input.items.length > 20) {
+        throw new Error('Your order must contain between 1 and 20 items.');
+      }
+      const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+      const items = input.items.map(item => {
+        const quantity = Number(item.quantity);
+        if (!uuidPattern.test(String(item.product_id || '')) ||
+            !uuidPattern.test(String(item.variant_id || '')) ||
+            !Number.isInteger(quantity) || quantity < 1 || quantity > 5) {
+          throw new Error('Each item must have a valid product, size and quantity between 1 and 5.');
+        }
+        return { product_id: item.product_id, variant_id: item.variant_id, quantity };
+      });
+      const idempotencyKey = clean(options.idempotencyKey);
+      const accessToken = clean(options.accessToken);
+      if (!uuidPattern.test(idempotencyKey) || !uuidPattern.test(accessToken)) {
+        throw new Error('Secure checkout could not be initialized. Please refresh and try again.');
+      }
+      const payload = { customer, items, payment_method: 'cod' };
+      const result = await request('rpc/place_order', {
+        method: 'POST',
+        prefer: 'return=representation',
+        body: {
+          p_payload: payload,
+          p_idempotency_key: idempotencyKey,
+          p_access_token: accessToken,
+        },
+      });
+      if (!result || typeof result.order_number !== 'string') {
+        throw new Error('The order response was incomplete. Please contact Paris Shoes before retrying.');
+      }
+      return result;
     },
 
     async sendContactMessage(input = {}) {

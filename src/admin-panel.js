@@ -12,7 +12,7 @@ const time = value => value ? new Intl.DateTimeFormat('en-BD', { dateStyle: 'med
 let accessToken = '';
 let owner = null;
 let view = 'overview';
-let data = { products: [], messages: [], subscribers: [], messageTotal: 0, subscriberTotal: 0 };
+let data = { products: [], messages: [], subscribers: [], orders: [], messageTotal: 0, subscriberTotal: 0 };
 let loading = false;
 let editingId = '';
 let noticeText = '';
@@ -74,7 +74,7 @@ async function signOut() {
   const token = accessToken;
   accessToken = '';
   owner = null;
-  data = { products: [], messages: [], subscribers: [], messageTotal: 0, subscriberTotal: 0 };
+  data = { products: [], messages: [], subscribers: [], orders: [], messageTotal: 0, subscriberTotal: 0 };
   try { if (token) await rawFetch('/auth/v1/logout', { method: 'POST' }, token); } catch {}
   render();
 }
@@ -87,11 +87,13 @@ async function loadData() {
       api('products?select=id,slug,name,description,category,audience,price,currency,colorway,badge,is_active,is_featured,sort_order,created_at,updated_at,product_images(id,image_url,alt_text,position),product_variants(id,size,sku,stock_quantity,is_available,updated_at)&order=updated_at.desc', { headers: { Range: '0-999', Prefer: 'count=exact' } }),
       api('contact_messages?select=id,name,email,subject,message,created_at&order=created_at.desc', { headers: { Range: '0-499', Prefer: 'count=exact' } }),
       api('newsletter_subscribers?select=id,email,created_at&order=created_at.desc', { headers: { Range: '0-999', Prefer: 'count=exact' } }),
+      api('orders?select=id,order_number,customer_name,customer_email,customer_phone,shipping_address,shipping_district,shipping_city,shipping_postal_code,customer_note,subtotal,shipping_fee,total,payment_method,payment_status,order_status,created_at,order_items(id,product_name,size,sku,unit_price,quantity,line_total)&order=created_at.desc', { headers: { Range: '0-499', Prefer: 'count=exact' } }),
     ]);
     data = {
       products: Array.isArray(requests[0].body) ? requests[0].body : [],
       messages: Array.isArray(requests[1].body) ? requests[1].body : [],
       subscribers: Array.isArray(requests[2].body) ? requests[2].body : [],
+      orders: Array.isArray(requests[3].body) ? requests[3].body : [],
       messageTotal: requests[1].count,
       subscriberTotal: requests[2].count,
     };
@@ -211,8 +213,15 @@ function subscribersPage() {
 }
 
 function ordersPage() {
-  return pageHeading('COMMERCE', 'Orders.', 'Order management will become available when real order submission and payment processing are enabled.') +
-    '<div class="ad-orders-empty"><span>□</span><h2>Order workflow not connected yet.</h2><p>The current storefront checkout is a demo. No customer orders, payment confirmations or revenue records are being created, so this area is intentionally disabled rather than showing invented sales data.</p><div class="ad-orders-list"><span>ORDER CAPTURE</span><b>Not connected</b><span>PAYMENT PROVIDER</span><b>Not connected</b><span>FULFILMENT STATUS</span><b>Not connected</b></div></div>';
+  const statuses = ['pending','confirmed','processing','shipped','delivered','cancelled','returned'];
+  const rows = data.orders.map(order => {
+    const items = (order.order_items || []).map(item => esc(item.product_name) + ' · ' + esc(item.size) + ' × ' + Number(item.quantity)).join('<br>');
+    const selected = statuses.map(status => '<option value="' + status + '"' + (order.order_status === status ? ' selected' : '') + '>' + status[0].toUpperCase() + status.slice(1) + '</option>').join('');
+    return '<tr><td><b>' + esc(order.order_number) + '</b><small>' + esc(time(order.created_at)) + '</small></td><td><b>' + esc(order.customer_name) + '</b><small>' + esc(order.customer_phone) + ' · ' + esc(order.customer_email) + '</small><small>' + esc(order.shipping_address) + ', ' + esc(order.shipping_city) + ', ' + esc(order.shipping_district) + '</small></td><td>' + (items || '—') + '</td><td><b>' + money(order.subtotal) + '</b><small>COD · ' + esc(order.payment_status) + '</small><small>Delivery fee: ' + money(order.shipping_fee) + '</small><small>COD total: ' + money(order.total) + '</small></td><td><input type="number" min="0" max="10000" step="1" inputmode="numeric" aria-label="Delivery fee" data-order-shipping-fee="' + esc(order.id) + '" value="' + Number(order.shipping_fee || 0) + '"><select data-order-status="' + esc(order.id) + '">' + selected + '</select><button type="button" class="ad-row-action" data-save-order="' + esc(order.id) + '">Save</button></td></tr>';
+  }).join('') || '<tr><td colspan="5" class="ad-empty-row">No real customer orders have been received yet.</td></tr>';
+  return pageHeading('COMMERCE', 'Orders.', 'Manage real Cash on Delivery orders, review customer details and update fulfilment status.') +
+    '<div class="ad-demo-alert"><b>DELIVERY CHARGE</b><span>Courier charges are not configured yet. Orders currently store a zero delivery fee; confirm the courier charge with the customer before confirming the final COD amount or dispatching.</span></div>' +
+    '<div class="ad-stat-inline"><b>' + data.orders.length + '</b> recent orders · newest first</div><div class="ad-panel"><div class="ad-table-wrap"><table><thead><tr><th>ORDER</th><th>CUSTOMER & DELIVERY</th><th>ITEMS</th><th>AMOUNT</th><th>STATUS</th></tr></thead><tbody>' + rows + '</tbody></table></div></div>';
 }
 
 function pageContent() {
@@ -330,6 +339,30 @@ root.addEventListener('click', async event => {
   const viewButton = event.target.closest('[data-view]');
   if (viewButton) { goto(viewButton.dataset.view); return; }
   if (event.target.closest('#ad-signout')) { await signOut(); return; }
+  const orderSaveButton = event.target.closest('[data-save-order]');
+  if (orderSaveButton) {
+    const orderId = orderSaveButton.dataset.saveOrder;
+    const select = root.querySelector('[data-order-status="' + CSS.escape(orderId) + '"]');
+    const feeInput = root.querySelector('[data-order-shipping-fee="' + CSS.escape(orderId) + '"]');
+    const order = data.orders.find(item => String(item.id) === String(orderId));
+    const allowed = ['pending','confirmed','processing','shipped','delivered','cancelled','returned'];
+    const fee = Number(feeInput?.value);
+    if (!select || !feeInput || !order || !allowed.includes(select.value) || !Number.isFinite(fee) || fee < 0 || fee > 10000 || !Number.isInteger(fee)) {
+      notify('Enter a valid whole-number delivery fee from 0 to 10,000 BDT.', true);
+      return;
+    }
+    orderSaveButton.disabled = true;
+    try {
+      await api('orders?id=eq.' + encodeURIComponent(orderId), { method: 'PATCH', body: JSON.stringify({
+        order_status: select.value, shipping_fee: fee, total: Number(order.subtotal) + fee, updated_at: new Date().toISOString()
+      }) });
+      await loadData();
+      notify('Order status and COD delivery amount updated.');
+    } catch (error) { notify(error.message || 'Could not update order.', true); }
+    finally { orderSaveButton.disabled = false; }
+    return;
+  }
+
   if (event.target.closest('[data-new-product]')) { editingId = 'new'; render(); editingId = ''; root.innerHTML = shell(productsPage()) + editorPage({}); return; }
   const edit = event.target.closest('[data-edit]');
   if (edit) { editingId = edit.dataset.edit; render(); return; }
