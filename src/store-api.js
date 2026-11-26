@@ -153,7 +153,7 @@ export function createStoreApi({
       const customer = {
         name: clean(customerInput.name),
         email: clean(customerInput.email).toLowerCase(),
-        phone: clean(customerInput.phone).replace(/[\\s-]/g, ''),
+        phone: clean(customerInput.phone).replace(/[\s-]/g, ''),
         address: clean(customerInput.address),
         district: clean(customerInput.district),
         city: clean(customerInput.city),
@@ -164,7 +164,7 @@ export function createStoreApi({
           !EMAIL_PATTERN.test(customer.email) || customer.email.length > 254) {
         throw new Error('Please enter a valid name and email address.');
       }
-      if (!/^(?:\\+?88)?01[3-9]\\d{8}$/.test(customer.phone)) {
+      if (!/^(?:\+?88)?01[3-9]\d{8}$/.test(customer.phone)) {
         throw new Error('Please enter a valid Bangladesh mobile number.');
       }
       if (customer.address.length < 8 || customer.address.length > 500 ||
