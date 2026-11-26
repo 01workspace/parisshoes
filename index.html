@@ -2767,7 +2767,7 @@
           { audience: 'women', label: 'Women', subtitle: 'Fresh silhouettes for every day', fallback: '/resources/hero-shoe-1.png' },
           { audience: 'kids', label: 'Kids', subtitle: 'Little steps, big adventures', fallback: '/resources/hero-shoe-5.png' },
         ];
-        const categoryLinks = ['Sneakers', 'Running', 'Trail', 'Casual', 'Loafers', 'Sandals', 'Flats', 'School Shoes'];
+        const categoryLinks = ['Sneakers', 'Running', 'Trail', 'Casual', 'Loafers', 'Sandals', 'Flats', 'School Shoes', 'Slip-ons'];
         const familyFeatured = ['men', 'women', 'kids']
           .map(audience => P.find(product => product.audience === audience && product.featured))
           .filter(Boolean);
@@ -2807,7 +2807,7 @@
         );
       }
 
-            const SHOP_CATEGORIES = ['Sneakers', 'Running', 'Trail', 'Casual', 'Loafers', 'Sandals', 'Flats', 'Heels', 'School Shoes', 'Slip-ons'];
+            const SHOP_CATEGORIES = ['Sneakers', 'Running', 'Trail', 'Casual', 'Loafers', 'Sandals', 'Flats', 'School Shoes', 'Slip-ons'];
       let shopSearch = '';
 
       function selectShopProducts({ audience = 'All', category = 'All', search = '', under = false } = {}) {
@@ -2853,7 +2853,7 @@
         const under = q.get('under') === '1';
         shopSearch = search || '';
         const list = selectShopProducts({ audience, category: type, search, under });
-        const categoryOptions = ['All', ...SHOP_CATEGORIES].map(name =>
+        const categoryOptions = ['All', ...new Set([...SHOP_CATEGORIES, ...P.map(product => product.t)])].map(name =>
           '<option value="' + escapeHtml(name) + '"' + (type === name ? ' selected' : '') + '>' + (name === 'All' ? 'All categories' : escapeHtml(name)) + '</option>'
         ).join('');
         const audienceOptions = [['All','Everyone'],['men','Men'],['women','Women'],['kids','Kids']].map(item =>
