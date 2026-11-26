@@ -2578,12 +2578,37 @@
         .detail-thumbs button { width: 62px; height: 62px; }
         .bag-image-wrap { width: 85px; height: 85px; }
       }
+      .product-badge { position:absolute; top:12px; left:12px; z-index:2; padding:6px 8px; color:var(--ink); background:var(--paper); border:1px solid var(--line); font-size:8px; line-height:1.2; letter-spacing:.1em; text-transform:uppercase; }
+      .family-category { display:flex; flex-direction:column; justify-content:center; gap:8px; }
+      .family-category .family-copy { position:absolute; left:22px; right:22px; bottom:18px; display:flex; flex-direction:column; gap:4px; z-index:1; text-align:left; }
+      .family-category .family-copy b { position:static!important; font-size:23px!important; }
+      .family-category .family-copy small { max-width:220px; font-size:10px; line-height:1.5; color:var(--muted); letter-spacing:.08em; }
+      .shop-category-links { display:flex; flex-wrap:wrap; align-items:center; gap:9px; padding-top:24px; }
+      .shop-category-links .eyebrow { margin-right:8px; }
+      .shop-category-links a { padding:10px 13px; border:1px solid var(--line); font-size:10px; letter-spacing:.08em; text-transform:uppercase; transition:background .2s,color .2s; }
+      .shop-category-links a:hover { background:var(--ink); color:var(--paper); }
+      .filter-select { width:100%; padding:11px 12px; margin:5px 0 20px; color:var(--ink); background:transparent; border:1px solid var(--line); font:inherit; font-size:12px; }
+      .toolbar { align-items:center; gap:10px; flex-wrap:wrap; }
+      .toolbar input[type="search"] { min-width:120px; flex:1; max-width:280px; padding:11px 12px; color:var(--ink); background:transparent; border:1px solid var(--line); font-size:12px; }
+      .toolbar select { max-width:190px; }
+      .detail-audience { font-size:10px!important; letter-spacing:.1em; text-transform:uppercase; }
+      .footgrid { grid-template-columns:1.3fr 1fr 1fr 1fr 1.2fr; }
+      @media (max-width:900px) { .footgrid { grid-template-columns:repeat(3,1fr); } }
+      @media (max-width:640px) {
+        .footgrid { grid-template-columns:1fr 1fr; }
+        .shop-category-links { gap:7px; }
+        .shop-category-links .eyebrow { width:100%; }
+        .toolbar input[type="search"] { flex-basis:100%; max-width:none; order:3; }
+        .toolbar select { max-width:155px; }
+        .family-category .family-copy { left:14px; right:14px; bottom:13px; }
+        .family-category .family-copy b { font-size:19px!important; }
+      }
 </style>
   </head>
   <body>
     <div id="app"></div>
     <script type="module">
-      import { createStoreApi } from '/src/store-api.js';
+      import { createStoreApi, filterProducts } from '/src/store-api.js';
       const storeApi = createStoreApi({
         supabaseUrl: import.meta.env.VITE_SUPABASE_URL,
         publishableKey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
@@ -2707,32 +2732,42 @@
       }
       function header() {
         return (
-          '<header class="header"><button class="menu" id="menu">☰</button><a class="brand" href="#/home" aria-label="Paris Shoes home"><img src="/resources/paris-shoes-logo.png" alt="Paris Shoes"></a><nav class="nav ' +
+          '<header class="header"><button class="menu" id="menu" aria-label="Open navigation">☰</button><a class="brand" href="#/home" aria-label="Paris Shoes home"><img src="/resources/paris-shoes-logo.png" alt="Paris Shoes"></a><nav class="nav ' +
           (menu ? 'open' : '') +
-          '" id="nav"><a href="#/shop">Shop all</a><a href="#/shop?type=Running">Running</a><a href="#/shop?type=Trail">Trail</a><a href="#/shop?type=Everyday">Everyday</a><a href="#/factories">Our approach</a></nav><div class="actions"><a href="#/help"><span class="label">Help</span></a><a href="#/bag">Bag (' +
+          '" id="nav"><a href="#/shop">Shop all</a><a href="#/shop?audience=men">Men</a><a href="#/shop?audience=women">Women</a><a href="#/shop?audience=kids">Kids</a><a href="#/factories">Our approach</a></nav><div class="actions"><a href="#/help"><span class="label">Help</span></a><a href="#/wishlist"><span class="label">Saved</span></a><a href="#/bag">Bag (' +
           qty() +
           ')</a></div></header>'
         );
       }
+
       function footer() {
-        return '<footer class="footer"><div class="footgrid"><div><a class="brand" href="#/home" style="font-size:48px;color:white">Paris Shoes</a><p>Good shoes for wherever the day takes you. Thoughtfully made, ready to move.</p></div><div><h4>Explore</h4><a href="#/shop">Shop all</a><a href="#/shop?type=Running">Running</a><a href="#/shop?type=Trail">Trail</a><a href="#/size-guide">Size guide</a></div><div><h4>About</h4><a href="#/factories">Our factories</a><a href="#/contact">Help & contact</a><a href="#/account">Your account</a></div><div><h4>Notes from Paris Shoes</h4><p>New releases, field notes and good things.</p><form id="newsletter" class="newsletter"><input name="email" type="email" placeholder="Your email address" autocomplete="email" maxlength="254" aria-label="Email address for newsletter" required><button type="submit" aria-label="Subscribe to newsletter">↗</button></form><p class="newsletter-status" id="newsletter-status" aria-live="polite"></p></div></div><div class="footbottom"><span>© 2026 Paris Shoes</span><span>Made to move. Made to last.</span><span>Instagram · Pinterest</span></div></footer><div class="notice" id="notice"></div>';
+        return '<footer class="footer"><div class="footgrid"><div><a class="brand" href="#/home" style="font-size:48px;color:white">Paris Shoes</a><p>Good shoes for wherever the day takes you. Thoughtfully made, ready to move.</p></div><div><h4>Shop by family</h4><a href="#/shop?audience=men">Men’s shoes</a><a href="#/shop?audience=women">Women’s shoes</a><a href="#/shop?audience=kids">Kids’ shoes</a><a href="#/shop">Shop all</a></div><div><h4>Popular categories</h4><a href="#/shop?category=Sneakers">Sneakers</a><a href="#/shop?category=Running">Running</a><a href="#/shop?category=Sandals">Sandals</a><a href="#/shop?category=School%20Shoes">School shoes</a></div><div><h4>About & support</h4><a href="#/factories">Our approach</a><a href="#/size-guide">Size guide</a><a href="#/help">Help & contact</a><a href="#/contact">Contact the team</a><a href="#/account">Your account</a></div><div><h4>Notes from Paris Shoes</h4><p>New releases, field notes and good things.</p><form id="newsletter" class="newsletter"><input name="email" type="email" placeholder="Your email address" autocomplete="email" maxlength="254" aria-label="Email address for newsletter" required><button type="submit" aria-label="Subscribe to newsletter">↗</button></form><p class="newsletter-status" id="newsletter-status" aria-live="polite"></p></div></div><div class="footbottom"><span>© 2026 Paris Shoes</span><span>Made to move. Made to last.</span><span>Instagram · Pinterest</span></div></footer><div class="notice" id="notice"></div>';
       }
+
       function card(p) {
         const id = escapeHtml(p.id), name = escapeHtml(p.n);
         const category = escapeHtml(p.t), colorway = escapeHtml(p.c);
+        const audience = p.audience === 'kids' ? 'Kids' : p.audience === 'women' ? 'Women' : p.audience === 'men' ? 'Men' : 'Unisex';
         const image = p.i
           ? '<img loading="lazy" src="' + escapeHtml(p.i) + '" alt="' + name + '">'
           : '<div class="product-image-placeholder" aria-label="Product image coming soon">Paris Shoes</div>';
         return (
-          '<article class="product"><div class="product-img"><a href="#/product/' + id + '">' + image + '</a><button class="heart ' +
-          (saved.includes(String(p.id)) ? 'on' : '') + '" data-save="' + id + '" aria-label="Save ' + name + '">' +
+          '<article class="product"><div class="product-img"><a href="#/product/' + id + '">' + image + '</a>' +
+          (p.tag ? '<span class="product-badge">' + escapeHtml(p.tag) + '</span>' : '') +
+          '<button class="heart ' + (saved.includes(String(p.id)) ? 'on' : '') + '" data-save="' + id + '" aria-label="Save ' + name + '">' +
           (saved.includes(String(p.id)) ? '♥' : '♡') + '</button></div><div class="meta"><div><b><a href="#/product/' + id + '">' +
-          name + '</a></b><small>' + category + (colorway ? ' · ' + colorway : '') + '</small></div><span>' +
+          name + '</a></b><small>' + audience + ' · ' + category + (colorway ? ' · ' + colorway : '') + '</small></div><span>' +
           money(p.p, p.currency) + '</span></div></article>'
         );
       }
 
       function home() {
+        const families = [
+          { audience: 'men', label: 'Men', subtitle: 'Everyday staples and sport-ready pairs', fallback: '/resources/hero-shoe-2.png' },
+          { audience: 'women', label: 'Women', subtitle: 'Fresh silhouettes for every day', fallback: '/resources/hero-shoe-1.png' },
+          { audience: 'kids', label: 'Kids', subtitle: 'Little steps, big adventures', fallback: '/resources/hero-shoe-5.png' },
+        ];
+        const categoryLinks = ['Sneakers', 'Running', 'Trail', 'Casual', 'Loafers', 'Sandals', 'Flats', 'School Shoes'];
         return (
           '<main class="home-page">' +
           '<section class="campaign-hero">' +
@@ -2752,46 +2787,88 @@
           '<div class="campaign-scroll">Scroll to discover ↓</div></section>' +
           '<div class="motion-ticker"><div class="motion-ticker-track"><span>MADE TO MOVE</span><span>MADE TO LAST</span><span>FIND YOUR PACE</span><span>MADE TO MOVE</span><span>MADE TO LAST</span><span>FIND YOUR PACE</span></div></div>' +
           '<section class="section home-featured reveal-section"><div class="head"><div><span class="eyebrow">Curated for your every day</span><h2>Meet your next<br>favourite pair.</h2></div><a class="link" href="#/shop">Shop all styles ↗</a></div><div class="products">' +
-          P.length ? P.slice(0, 4).map(card).join('') : catalogueEmpty() +
+          (P.length ? P.slice(0, 4).map(card).join('') : catalogueEmpty()) +
           '</div></section>' +
-          '<section class="section home-categories reveal-section" style="padding-top:0"><div class="head"><div><span class="eyebrow">Different days. Different directions.</span><h2>Find your kind of move.</h2></div></div><div class="categories">' +
-          [['Everyday', DEMO_PRODUCTS[0]], ['Running', DEMO_PRODUCTS[1]], ['Trail', DEMO_PRODUCTS[2]]].map(x => '<a class="category" href="#/shop?type=' + x[0] + '"><img src="' + x[1].i + '" alt="' + x[0] + ' shoes"><b>' + x[0] + ' ↗</b></a>').join('') +
+          '<section class="section home-categories reveal-section" style="padding-top:0"><div class="head"><div><span class="eyebrow">Find your fit</span><h2>Shop by family.</h2></div><a class="link" href="#/shop">Explore everything ↗</a></div><div class="categories">' +
+          families.map(family => {
+            const product = P.find(item => item.audience === family.audience && item.i);
+            const image = product?.i || family.fallback;
+            return '<a class="category family-category" href="#/shop?audience=' + family.audience + '"><img src="' + escapeHtml(image) + '" alt="' + family.label + ' shoes"><span class="family-copy"><b>' + family.label + ' ↗</b><small>' + family.subtitle + '</small></span></a>';
+          }).join('') +
+          '</div><div class="shop-category-links"><span class="eyebrow">Shop by category</span>' +
+          categoryLinks.map(name => '<a href="#/shop?category=' + encodeURIComponent(name) + '">' + escapeHtml(name) + ' ↗</a>').join('') +
           '</div></section>' +
           '<section class="story home-story reveal-section"><img src="https://images.unsplash.com/photo-1520256862855-398228c41684?w=1200&q=85" alt="Craft and materials"><div class="copy"><span class="eyebrow">A better way forward</span><h2>Good things<br>take thought.</h2><p>We work with long-term partners, choose materials with care and keep asking how a shoe can do more with less. Better by design, not by slogan.</p><a class="link" href="#/factories">How we make things ↗</a></div></section>' +
           '<section class="quote home-quote reveal-section"><small>A LITTLE REMINDER</small><blockquote>“The best route is rarely the shortest. Make room for the good detours.”</blockquote><small>— THE PARIS SHOES OUTLOOK</small></section></main>'
         );
       }
+
+      const SHOP_CATEGORIES = ['Sneakers', 'Running', 'Trail', 'Casual', 'Loafers', 'Sandals', 'Flats', 'Heels', 'School Shoes', 'Slip-ons'];
+      let shopSearch = '';
+
+      function selectShopProducts({ audience = 'All', category = 'All', search = '', under = false } = {}) {
+        let list = filterProducts(P, { audience, category, search });
+        if (under) list = list.filter(product => product.p < 3000);
+        if (sort === 'low') list = list.sort((a, b) => a.p - b.p);
+        if (sort === 'high') list = list.sort((a, b) => b.p - a.p);
+        if (sort === 'new') list = list.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+        return list;
+      }
+
+      function renderShopResults() {
+        const audience = $('#audience-filter')?.value || 'All';
+        const category = $('#category-filter')?.value || 'All';
+        shopSearch = $('#catalogue-search')?.value || '';
+        const under = Boolean($('#under')?.checked);
+        const list = selectShopProducts({ audience, category, search: shopSearch, under });
+        const catalogue = $('#catalogue');
+        if (catalogue) catalogue.innerHTML = list.length ? list.map(card).join('') : catalogueEmpty();
+        const count = $('#style-count');
+        if (count) count.textContent = list.length + (list.length === 1 ? ' style' : ' styles');
+      }
+
+      function updateShopRoute() {
+        const params = new URLSearchParams();
+        const audience = $('#audience-filter')?.value || 'All';
+        const category = $('#category-filter')?.value || 'All';
+        const search = $('#catalogue-search')?.value || '';
+        const under = Boolean($('#under')?.checked);
+        shopSearch = search;
+        if (audience !== 'All') params.set('audience', audience);
+        if (category !== 'All') params.set('category', category);
+        if (search.trim()) params.set('search', search.trim());
+        if (under) params.set('under', '1');
+        location.hash = '/shop' + (params.toString() ? '?' + params.toString() : '');
+      }
+
       function shop() {
-        let q = new URLSearchParams(location.hash.split('?')[1] || ''),
-          type = q.get('type') || category,
-          list = P.filter(p => type === 'All' || p.t === type);
-        if (sort === 'low') list.sort((a, b) => a.p - b.p);
-        if (sort === 'high') list.sort((a, b) => b.p - a.p);
+        const q = new URLSearchParams(location.hash.split('?')[1] || '');
+        const audience = q.get('audience') || 'All';
+        const type = q.get('category') || q.get('type') || 'All';
+        const search = q.has('search') ? q.get('search') : shopSearch;
+        const under = q.get('under') === '1';
+        shopSearch = search || '';
+        const list = selectShopProducts({ audience, category: type, search, under });
+        const categoryOptions = ['All', ...SHOP_CATEGORIES].map(name =>
+          '<option value="' + escapeHtml(name) + '"' + (type === name ? ' selected' : '') + '>' + (name === 'All' ? 'All categories' : escapeHtml(name)) + '</option>'
+        ).join('');
+        const audienceOptions = [['All','Everyone'],['men','Men'],['women','Women'],['kids','Kids']].map(item =>
+          '<option value="' + item[0] + '"' + (audience === item[0] ? ' selected' : '') + '>' + item[1] + '</option>'
+        ).join('');
         return (
-          '<main class="page"><div class="intro"><div><span class="eyebrow">The full collection</span><h1 class="page-title">Find your pair.</h1></div><p>Considered shapes, dependable comfort and a little room to wander. Find the shoe that fits your everyday.</p></div><div class="shop"><aside class="filters"><h3>Category</h3>' +
-          ['All', 'Everyday', 'Running', 'Trail', 'Lifestyle']
-            .map(
-              t =>
-                '<label><input type="radio" name="category" value="' +
-                t +
-                '" ' +
-                (type === t ? 'checked' : '') +
-                '> ' +
-                t +
-                '</label>'
-            )
-            .join('') +
-          '<h3>Price</h3><label><input type="checkbox" id="under"> Under BDT 3,000</label><a class="link" href="#/size-guide">Size guide ↗</a></aside><div><div class="toolbar"><span>' +
-          list.length +
-          ' styles</span><select id="sort"><option value="featured">Featured</option><option value="low" ' +
-          (sort === 'low' ? 'selected' : '') +
-          '>Price: low to high</option><option value="high" ' +
-          (sort === 'high' ? 'selected' : '') +
-          '>Price: high to low</option></select></div><div class="products" id="catalogue">' +
-          list.length ? list.map(card).join('') : catalogueEmpty() +
+          '<main class="page"><div class="intro"><div><span class="eyebrow">The full collection</span><h1 class="page-title">Find your pair.</h1></div><p>Considered shapes, dependable comfort and a little room to wander. Find the shoe that fits your everyday.</p></div><div class="shop"><aside class="filters"><h3>Shop for</h3><select class="filter-select" id="audience-filter" aria-label="Shop by audience">' + audienceOptions +
+          '</select><h3>Category</h3><select class="filter-select" id="category-filter" aria-label="Shop by category">' + categoryOptions +
+          '</select><h3>Price</h3><label><input type="checkbox" id="under" ' + (under ? 'checked' : '') + '> Under BDT 3,000</label><a class="link" href="#/size-guide">Size guide ↗</a></aside><div><div class="toolbar"><span id="style-count">' +
+          list.length + (list.length === 1 ? ' style' : ' styles') +
+          '</span><input id="catalogue-search" type="search" value="' + escapeHtml(search) + '" placeholder="Search shoes" aria-label="Search shoes"><select id="sort" aria-label="Sort products"><option value="featured">Featured</option><option value="new" ' +
+          (sort === 'new' ? 'selected' : '') + '>Newest</option><option value="low" ' +
+          (sort === 'low' ? 'selected' : '') + '>Price: low to high</option><option value="high" ' +
+          (sort === 'high' ? 'selected' : '') + '>Price: high to low</option></select></div><div class="products" id="catalogue">' +
+          (list.length ? list.map(card).join('') : catalogueEmpty()) +
           '</div></div></div></main>'
         );
       }
+
       function product(id) {
         const key = decodeURIComponent(String(id));
         const p = P.find(x => String(x.id) === key || x.slug === key);
@@ -2818,7 +2895,7 @@
         return (
           '<main class="detail"><div class="detail-gallery">' + mainImage + thumbnails + '</div><div class="detail-info"><span class="eyebrow">' +
           escapeHtml(p.tag || p.t) + ' / ' + escapeHtml(p.t) + '</span><h1>' + escapeHtml(p.n) + '</h1><b>' +
-          money(p.p,p.currency) + '</b><p>' + escapeHtml(p.d) + '</p>' +
+          money(p.p,p.currency) + '</b><p>' + escapeHtml(p.d) + '</p><p class="detail-audience">' + (p.audience === 'kids' ? 'Kids' : p.audience === 'women' ? 'Women' : 'Men') + ' · ' + escapeHtml(p.t) + '</p>' +
           (p.c ? '<p>Colour: <b>' + escapeHtml(p.c) + '</b></p>' : '') +
           '<span class="eyebrow">Choose your size · <a href="#/size-guide">Size guide</a></span><div class="sizes">' + sizeButtons +
           '</div><button class="btn" id="add"' + (firstAvailable ? '' : ' disabled') + '>' +
@@ -2997,7 +3074,7 @@
               : r === 'shop'
                 ? shop()
                 : r.startsWith('product/')
-                  ? product(Number(r.split('/')[1]))
+                  ? product(decodeURIComponent(r.split('/')[1]))
                   : r === 'bag'
                     ? bagPage()
                     : r === 'wishlist'
@@ -3084,17 +3161,6 @@
           menu = !menu;
           $('#nav').classList.toggle('open', menu);
         });
-        document.querySelectorAll('[data-save]').forEach(b =>
-          b.addEventListener('click', () => {
-            let id = b.dataset.save;
-            saved = saved.includes(id)
-              ? saved.filter(x => x !== id)
-              : [...saved, id];
-            persist();
-            render();
-            notice('Wishlist updated');
-          })
-        );
         document.querySelectorAll('[data-size]').forEach(b =>
           b.addEventListener('click', () => {
             size = b.dataset.size;
@@ -3136,26 +3202,14 @@
             render();
           })
         );
-        document.querySelectorAll('[name=category]').forEach(b =>
-          b.addEventListener('change', () => {
-            category = b.value;
-            location.hash =
-              '/shop' + (category === 'All' ? '' : '?type=' + category);
-          })
-        );
         $('#sort')?.addEventListener('change', e => {
           sort = e.target.value;
           render();
         });
-        $('#under')?.addEventListener('change', e => {
-          let q = e.target.checked;
-          $('#catalogue').innerHTML = P.filter(
-            p => (category === 'All' || p.t === category) && (!q || p.p < 3000)
-          )
-            .map(card)
-            .join('');
-          bind();
-        });
+        $('#audience-filter')?.addEventListener('change', updateShopRoute);
+        $('#category-filter')?.addEventListener('change', updateShopRoute);
+        $('#under')?.addEventListener('change', updateShopRoute);
+        $('#catalogue-search')?.addEventListener('input', renderShopResults);
         $('#newsletter')?.addEventListener('submit', async e => {
           e.preventDefault();
           const form = e.currentTarget, button = form.querySelector('button[type="submit"]');
@@ -3204,6 +3258,16 @@
           setTimeout(() => go('home'), 1100);
         });
       }
+      $('#app').addEventListener('click', event => {
+        const button = event.target.closest('[data-save]');
+        if (!button) return;
+        const id = button.dataset.save;
+        saved = saved.includes(id) ? saved.filter(value => value !== id) : [...saved, id];
+        persist();
+        render();
+        notice('Wishlist updated');
+      });
+
       window.addEventListener('hashchange', () => {
         menu = false;
         render();
