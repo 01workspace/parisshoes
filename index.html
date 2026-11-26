@@ -2603,12 +2603,48 @@
         .family-category .family-copy { left:14px; right:14px; bottom:13px; }
         .family-category .family-copy b { font-size:19px!important; }
       }
-</style>
+
+      .quick-view-trigger { position:absolute; left:10px; bottom:10px; z-index:2; border:1px solid #17181655; background:#f5f3eeef; color:var(--ink); padding:10px 12px; font-size:10px; letter-spacing:.1em; text-transform:uppercase; opacity:0; transform:translateY(5px); transition:.2s ease; }
+      .product:hover .quick-view-trigger,.quick-view-trigger:focus-visible { opacity:1; transform:none; }
+      .filter-drawer { min-width:0; } .filter-drawer>summary { display:none; }
+      .filter-select,.filter-input { width:100%; min-height:42px; padding:10px 11px; background:transparent; border:1px solid var(--line); color:var(--ink); }
+      .price-range { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+      .filter-clear { margin:12px 0; padding:9px 0; border:0; border-bottom:1px solid; background:none; font-size:11px; text-transform:uppercase; letter-spacing:.1em; }
+      .detail-zoom { display:block; position:relative; width:100%; padding:0; border:1px solid var(--line); background:var(--paper-2); cursor:zoom-in; }
+      .detail-zoom img { display:block; width:100%; max-height:650px; object-fit:contain; mix-blend-mode:multiply; }
+      .detail-zoom span { position:absolute; right:14px; bottom:14px; padding:9px 12px; background:#fffefae8; font-size:10px; text-transform:uppercase; }
+      .overlay[hidden] { display:none!important; } .overlay { position:fixed; inset:0; z-index:50; display:grid; place-items:center; padding:22px; background:#111d; backdrop-filter:blur(8px); }
+      .overlay-open { overflow:hidden; }
+      .quick-view-panel { position:relative; display:grid; grid-template-columns:minmax(0,1fr) minmax(280px,.85fr); gap:30px; width:min(900px,100%); max-height:90svh; overflow:auto; padding:30px; background:var(--paper); }
+      .quick-view-image { display:grid; place-items:center; min-height:320px; background:var(--paper-2); }
+      .quick-view-image img { width:100%; max-height:460px; object-fit:contain; mix-blend-mode:multiply; }
+      .quick-view-copy { align-self:center; padding:20px 0; } .quick-view-copy h2 { font-size:clamp(32px,4vw,52px); margin:14px 0; }
+      .quick-view-copy p { color:var(--muted); font-size:13px; line-height:1.7; } .quick-add { width:100%; text-align:center; }
+      .quick-view-copy .link { display:inline-block; margin-top:18px; }
+      .overlay-close { position:absolute; top:12px; right:12px; z-index:3; width:42px; height:42px; border:1px solid var(--line); border-radius:50%; background:var(--paper); color:var(--ink); font-size:25px; }
+      .image-lightbox img { max-width:min(100%,1100px); max-height:86svh; object-fit:contain; }
+      @media (hover:none) { .quick-view-trigger { opacity:1; transform:none; } }
+      @media (max-width:900px) { .filter-drawer { grid-column:1/-1; } .filter-drawer>summary { display:block; padding:13px 0; border-block:1px solid var(--line); font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; } .shop { grid-template-columns:1fr; gap:16px; } .filters { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px 12px; padding:14px 0; } .filters h3 { grid-column:1/-1; margin:9px 0 0; } .toolbar { display:grid; grid-template-columns:1fr 1fr; gap:10px; align-items:center; } .toolbar input,.toolbar select { min-width:0; width:100%; } }
+      @media (max-width:640px) { .quick-view-panel { grid-template-columns:1fr; gap:14px; padding:18px; max-height:92svh; } .quick-view-image { min-height:220px; } .quick-view-image img { max-height:260px; } .quick-view-copy { padding:4px 0 10px; } .filters { grid-template-columns:1fr 1fr; } .filters .filter-clear,.filters a { grid-column:1/-1; } .detail-zoom img { max-height:420px; } }
+
+    
+      .related-section { padding-top: 12px; }
+      .fit-note a { border-bottom: 1px solid; }
+      .size-chart-wrap { margin: 36px 0; max-width: 760px; }
+      .size-chart-wrap p { color: var(--muted); font-size: 13px; line-height: 1.6; }
+      .size-chart-scroll { overflow-x:auto; }
+      .size-chart { width:100%; border-collapse:collapse; font-size:13px; text-align:left; }
+      .size-chart th,.size-chart td { padding:11px 13px; border-bottom:1px solid var(--line); white-space:nowrap; }
+      .size-chart th { font-size:10px; letter-spacing:.1em; text-transform:uppercase; }
+      @media(max-width:640px) { .size-chart { font-size:11px; } .size-chart th,.size-chart td { padding:9px 8px; } }
+
+    </style>
   </head>
   <body>
     <div id="app"></div>
     <script type="module">
-      import { createStoreApi, filterProducts } from '/src/store-api.js';
+      import { createStoreApi } from '/src/store-api.js';
+      import { filterCatalog, getRecentlyViewed } from '/src/storefront-ux.js';
       const storeApi = createStoreApi({
         supabaseUrl: import.meta.env.VITE_SUPABASE_URL,
         publishableKey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
@@ -2699,17 +2735,20 @@
       const $ = s => document.querySelector(s),
         money = (n, currency = 'BDT') => new Intl.NumberFormat('en-BD', { style: 'currency', currency, maximumFractionDigits: 0 }).format(Number(n) || 0),
         escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+      const readStored = (key, fallback) => { try { return JSON.parse(localStorage.getItem(key) || 'null') ?? fallback; } catch { return fallback; } };
       let catalogueReady = false,
         catalogueMessage = '';
-      let bag = JSON.parse(localStorage.getItem('ambleBag') || '[]'),
-        saved = JSON.parse(localStorage.getItem('ambleSaved') || '[]'),
+      let bag = readStored('parisBag', readStored('ambleBag', [])),
+        saved = readStored('parisSaved', readStored('ambleSaved', [])),
+        recentlyViewed = readStored('parisRecentlyViewed', []), quickViewId = null, quickViewSize = '',
         size = 42,
         sort = 'featured',
         menu = false,
         category = 'All';
       const persist = () => {
-          localStorage.setItem('ambleBag', JSON.stringify(bag));
-          localStorage.setItem('ambleSaved', JSON.stringify(saved));
+          localStorage.setItem('parisBag', JSON.stringify(bag));
+          localStorage.setItem('parisSaved', JSON.stringify(saved));
+          localStorage.setItem('parisRecentlyViewed', JSON.stringify(recentlyViewed));
         },
         qty = () => bag.reduce((a, x) => a + x.q, 0),
         total = () =>
@@ -2752,7 +2791,7 @@
           ? '<img loading="lazy" src="' + escapeHtml(p.i) + '" alt="' + name + '">'
           : '<div class="product-image-placeholder" aria-label="Product image coming soon">Paris Shoes</div>';
         return (
-          '<article class="product"><div class="product-img"><a href="#/product/' + id + '">' + image + '</a>' +
+          '<article class="product"><div class="product-img"><a href="#/product/' + id + '">' + image + '</a><button class="quick-view-trigger" type="button" data-quick-view="' + id + '">Quick view ↗</button>' +
           (p.tag ? '<span class="product-badge">' + escapeHtml(p.tag) + '</span>' : '') +
           '<button class="heart ' + (saved.includes(String(p.id)) ? 'on' : '') + '" data-save="' + id + '" aria-label="Save ' + name + '">' +
           (saved.includes(String(p.id)) ? '♥' : '♡') + '</button></div><div class="meta"><div><b><a href="#/product/' + id + '">' +
@@ -2810,8 +2849,8 @@
             const SHOP_CATEGORIES = ['Sneakers', 'Running', 'Trail', 'Casual', 'Loafers', 'Sandals', 'Flats', 'School Shoes', 'Slip-ons'];
       let shopSearch = '';
 
-      function selectShopProducts({ audience = 'All', category = 'All', search = '', under = false } = {}) {
-        let list = filterProducts(P, { audience, category, search });
+      function selectShopProducts({ audience = 'All', category = 'All', search = '', under = false, color = '', size: sizeFilter = '', inStock = false, minPrice = '', maxPrice = '' } = {}) {
+        let list = filterCatalog(P, { audience, category, search, color, size: sizeFilter, inStock, minPrice, maxPrice });
         if (under) list = list.filter(product => product.p < 3000);
         if (sort === 'low') list = list.sort((a, b) => a.p - b.p);
         if (sort === 'high') list = list.sort((a, b) => b.p - a.p);
@@ -2824,7 +2863,7 @@
         const category = $('#category-filter')?.value || 'All';
         shopSearch = $('#catalogue-search')?.value || '';
         const under = Boolean($('#under')?.checked);
-        const list = selectShopProducts({ audience, category, search: shopSearch, under });
+        const list = selectShopProducts({ audience, category, search: shopSearch, under, color: $('#color-filter')?.value || '', size: $('#size-filter')?.value || '', inStock: Boolean($('#stock-filter')?.checked), minPrice: $('#min-price')?.value || '', maxPrice: $('#max-price')?.value || '' });
         const catalogue = $('#catalogue');
         if (catalogue) catalogue.innerHTML = list.length ? list.map(card).join('') : catalogueEmpty();
         const count = $('#style-count');
@@ -2852,6 +2891,7 @@
         const search = q.has('search') ? q.get('search') : shopSearch;
         const under = q.get('under') === '1';
         shopSearch = search || '';
+        const sizes = [...new Set(P.flatMap(product => (product.variants || []).map(variant => variant.size)))].sort((a,b) => String(a).localeCompare(String(b), undefined, { numeric: true }));
         const list = selectShopProducts({ audience, category: type, search, under });
         const categoryOptions = ['All', ...new Set([...SHOP_CATEGORIES, ...P.map(product => product.t)])].map(name =>
           '<option value="' + escapeHtml(name) + '"' + (type === name ? ' selected' : '') + '>' + (name === 'All' ? 'All categories' : escapeHtml(name)) + '</option>'
@@ -2860,9 +2900,9 @@
           '<option value="' + item[0] + '"' + (audience === item[0] ? ' selected' : '') + '>' + item[1] + '</option>'
         ).join('');
         return (
-          '<main class="page"><div class="intro"><div><span class="eyebrow">The full collection</span><h1 class="page-title">Find your pair.</h1></div><p>Considered shapes, dependable comfort and a little room to wander. Find the shoe that fits your everyday.</p></div><div class="shop"><aside class="filters"><h3>Shop for</h3><select class="filter-select" id="audience-filter" aria-label="Shop by audience">' + audienceOptions +
+          '<main class="page"><div class="intro"><div><span class="eyebrow">The full collection</span><h1 class="page-title">Find your pair.</h1></div><p>Considered shapes, dependable comfort and a little room to wander. Find the shoe that fits your everyday.</p></div><div class="shop"><details class="filter-drawer" open><summary>Filter & refine</summary><aside class="filters"><h3>Shop for</h3><select class="filter-select" id="audience-filter" aria-label="Shop by audience">' + audienceOptions +
           '</select><h3>Category</h3><select class="filter-select" id="category-filter" aria-label="Shop by category">' + categoryOptions +
-          '</select><h3>Price</h3><label><input type="checkbox" id="under" ' + (under ? 'checked' : '') + '> Under BDT 3,000</label><a class="link" href="#/size-guide">Size guide ↗</a></aside><div><div class="toolbar"><span id="style-count">' +
+          '</select><h3>Size</h3><select class="filter-select" id="size-filter" aria-label="Filter by size"><option value="">All sizes</option>' + sizes.map(value => '<option value="' + escapeHtml(value) + '">' + escapeHtml(value) + '</option>').join('') + '</select><h3>Colour</h3><input class="filter-input" id="color-filter" type="search" placeholder="e.g. black, white" aria-label="Filter by colour"><h3>Price range · BDT</h3><div class="price-range"><input class="filter-input" id="min-price" type="number" min="0" placeholder="Min" aria-label="Minimum price"><input class="filter-input" id="max-price" type="number" min="0" placeholder="Max" aria-label="Maximum price"></div><label><input type="checkbox" id="stock-filter"> In-stock sizes only</label><label><input type="checkbox" id="under" ' + (under ? 'checked' : '') + '> Under BDT 3,000</label><button type="button" id="clear-filters" class="filter-clear">Clear filters</button><a class="link" href="#/size-guide">Size guide ↗</a></aside></details><div><div class="toolbar"><span id="style-count">' +
           list.length + (list.length === 1 ? ' style' : ' styles') +
           '</span><input id="catalogue-search" type="search" value="' + escapeHtml(search) + '" placeholder="Search shoes" aria-label="Search shoes"><select id="sort" aria-label="Sort products"><option value="featured">Featured</option><option value="new" ' +
           (sort === 'new' ? 'selected' : '') + '>Newest</option><option value="low" ' +
@@ -2881,8 +2921,10 @@
         const firstAvailable = variants.find(variant => variant.available);
         if (!variants.some(variant => variant.size === String(size) && variant.available)) size = firstAvailable ? firstAvailable.size : '';
         const gallery = p.images || [];
+        recentlyViewed = getRecentlyViewed(p.id, recentlyViewed, 6);
+        persist();
         const mainImage = gallery[0]
-          ? '<img id="productMainImage" src="' + escapeHtml(gallery[0].url) + '" alt="' + escapeHtml(gallery[0].alt) + '">'
+          ? '<button class="detail-zoom" id="zoomProductImage" type="button" aria-label="Enlarge product image"><img id="productMainImage" src="' + escapeHtml(gallery[0].url) + '" alt="' + escapeHtml(gallery[0].alt) + '"><span>Tap to enlarge ↗</span></button>'
           : '<div class="product-image-placeholder product-image-placeholder-large">Product photography coming soon</div>';
         const thumbnails = gallery.length > 1
           ? '<div class="detail-thumbs">' + gallery.map((image,index) =>
@@ -2904,8 +2946,15 @@
           '<span class="eyebrow">Choose your size · <a href="#/size-guide">Size guide</a></span><div class="sizes">' + sizeButtons +
           '</div><button class="btn" id="add"' + (firstAvailable ? '' : ' disabled') + '>' +
           (firstAvailable ? 'Add to bag · ' + money(p.p,p.currency) + ' ↗' : 'Currently unavailable') +
-          '</button><p>Availability is shown for each size and updates when stock is changed.</p></div></main>'
+          '</button><p>Availability is shown for each size and updates when stock is changed.</p><p class="fit-note">Need help choosing? <a href="#/size-guide">Read our fit guide ↗</a></p></div></main>' + relatedProducts(p)
         );
+      }
+
+      function relatedProducts(current) {
+        const viewed = recentlyViewed.map(id => P.find(item => String(item.id) === String(id))).filter(item => item && String(item.id) !== String(current.id));
+        const matching = P.filter(item => String(item.id) !== String(current.id) && (item.t === current.t || item.audience === current.audience));
+        const picks = [...new Map([...matching, ...viewed].map(item => [String(item.id), item])).values()].slice(0,4);
+        return picks.length ? '<section class="section related-section"><div class="head"><div><span class="eyebrow">A few good matches</span><h2>You may also like.</h2></div><a class="link" href="#/shop">Shop all ↗</a></div><div class="products">' + picks.map(card).join('') + '</div></section>' : '';
       }
 
       function bagPage() {
@@ -2946,7 +2995,7 @@
         'size-guide': [
           'A good fit changes everything',
           'Find your fit.',
-          'Our shoes are designed around a comfortable, everyday fit. Use this guide as a starting point, and get in touch if you are between sizes.',
+          'Measure both feet while standing, from heel to the tip of the longest toe. Use the larger measurement. This indicative EU chart is a starting point; fit can vary by shoe shape.',
           [
             [
               'Measure at home',
@@ -2954,7 +3003,7 @@
             ],
             [
               'Between sizes?',
-              'For a closer fit, consider the smaller size. If you prefer extra room or wear thicker socks, size up.',
+              'If you are between sizes, consider the larger size for extra toe room. Sock thickness and shoe shape can change the feel.',
             ],
             [
               'Still unsure?',
@@ -2988,15 +3037,15 @@
           [
             [
               'Shipping',
-              'Shipping options and delivery estimates will be published when ordering is enabled.',
+              'Delivery availability, charges and estimated arrival depend on your delivery area. Confirmed details will be shown before real orders open.',
             ],
             [
               'Returns',
-              'Our return window and eligibility details will be published before orders open.',
+              'If a size is not right, contact our team before sending anything back. Exchange eligibility, time limits and return instructions will be published before real ordering opens.',
             ],
             [
               'Contact',
-              'Use the contact form to leave a message for the Paris Shoes team; messages are stored securely for review.',
+              'Need help choosing a size, checking a product or understanding delivery? Send our team a message and include the product name where possible.',
             ],
           ],
         ],
@@ -3036,6 +3085,7 @@
             )
             .join('') +
           '</div>' +
+          (k === 'size-guide' ? '<section class="size-chart-wrap"><h2>Indicative EU size chart</h2><p>Measure from heel to longest toe. Measurements are approximate; always consider the individual shoe fit.</p><div class="size-chart-scroll"><table class="size-chart"><thead><tr><th>EU</th><th>Foot length</th><th>Range</th></tr></thead><tbody>' + [['26','16.0 cm','Kids'],['27','16.7 cm','Kids'],['28','17.3 cm','Kids'],['29','18.0 cm','Kids'],['30','18.7 cm','Kids'],['31','19.3 cm','Kids'],['32','20.0 cm','Kids'],['33','20.7 cm','Kids'],['34','21.3 cm','Kids'],['35','22.0 cm','Kids'],['36','22.5 cm','Adult'],['37','23.0 cm','Adult'],['38','23.5 cm','Adult'],['39','24.5 cm','Adult'],['40','25.0 cm','Adult'],['41','25.5 cm','Adult'],['42','26.0 cm','Adult'],['43','27.0 cm','Adult'],['44','27.5 cm','Adult'],['45','28.0 cm','Adult'],['46','29.0 cm','Adult']].map(row => '<tr>' + row.map(cell => '<td>' + cell + '</td>').join('') + '</tr>').join('') + '</tbody></table></div></section>' : '') +
           (k === 'account'
             ? '<p><a class="btn" href="#/wishlist">View wishlist ↗</a></p>'
             : k === 'help'
@@ -3088,7 +3138,7 @@
                         : r === 'contact'
                           ? contactPage()
                           : info(r);
-        $('#app').innerHTML = header() + body + footer();
+        $('#app').innerHTML = header() + body + footer() + '<div class="overlay" id="quickView" hidden></div><div class="overlay image-lightbox" id="imageLightbox" hidden role="dialog" aria-modal="true" aria-label="Product image preview"><button class="overlay-close" type="button" data-close-overlay aria-label="Close image preview">×</button><img id="lightboxImage" alt=""></div>';
         bind();
       }
       let shoeTimer = null;
@@ -3158,6 +3208,13 @@
         }, { threshold: 0.14, rootMargin: '0px 0px -35px 0px' });
         sections.forEach(section => observer.observe(section));
       }
+      function openQuickView(id) {
+        const p = P.find(item => String(item.id) === String(id)); if (!p) return;
+        quickViewId = String(id); quickViewSize = (p.variants || []).find(item => item.available)?.size || '';
+        const modal = $('#quickView');
+        modal.innerHTML = '<div class="quick-view-panel" role="dialog" aria-modal="true" aria-labelledby="quick-view-title"><button class="overlay-close" type="button" data-close-overlay aria-label="Close quick view">×</button><div class="quick-view-image">' + (p.i ? '<img src="' + escapeHtml(p.i) + '" alt="' + escapeHtml(p.n) + '">' : '<div class="product-image-placeholder">Product image coming soon</div>') + '</div><div class="quick-view-copy"><span class="eyebrow">' + escapeHtml(p.t) + '</span><h2 id="quick-view-title">' + escapeHtml(p.n) + '</h2><b>' + money(p.p,p.currency) + '</b><p>' + escapeHtml(p.d) + '</p><span class="eyebrow">Choose your size</span><div class="sizes">' + (p.variants || []).map(item => '<button type="button" class="size ' + (item.size === quickViewSize ? 'sel' : '') + '" data-quick-size="' + escapeHtml(item.size) + '"' + (item.available ? '' : ' disabled') + '>' + escapeHtml(item.size) + '</button>').join('') + '</div><button class="btn quick-add" type="button" data-quick-add ' + (quickViewSize ? '' : 'disabled') + '>Add to bag ↗</button><a class="link" href="#/product/' + encodeURIComponent(p.id) + '">View full details ↗</a></div></div>';
+        modal.hidden = false; document.body.classList.add('overlay-open'); modal.querySelector('[data-close-overlay]')?.focus();
+      }
       function bind() {
         initShoeSlider();
         initHomeMotion();
@@ -3174,6 +3231,7 @@
             b.classList.add('sel');
           })
         );
+        $('#zoomProductImage')?.addEventListener('click', () => { const img = $('#productMainImage'); if (!img) return; $('#lightboxImage').src = img.src; $('#lightboxImage').alt = img.alt; $('#imageLightbox').hidden = false; document.body.classList.add('overlay-open'); });
         $('#add')?.addEventListener('click', () => {
           const id = decodeURIComponent(route().split('/')[1] || '');
           const p = P.find(product => String(product.id) === id);
@@ -3212,7 +3270,9 @@
         });
         $('#audience-filter')?.addEventListener('change', updateShopRoute);
         $('#category-filter')?.addEventListener('change', updateShopRoute);
-        $('#under')?.addEventListener('change', updateShopRoute);
+        $('#under')?.addEventListener('change', renderShopResults);
+        ['stock-filter','size-filter','color-filter','min-price','max-price'].forEach(id => { $('#' + id)?.addEventListener('change', renderShopResults); $('#' + id)?.addEventListener('input', renderShopResults); });
+        $('#clear-filters')?.addEventListener('click', () => { ['size-filter','color-filter','min-price','max-price'].forEach(id => { const el = $('#' + id); if (el) el.value = ''; }); ['under','stock-filter'].forEach(id => { const el = $('#' + id); if (el) el.checked = false; }); renderShopResults(); });
         $('#catalogue-search')?.addEventListener('input', renderShopResults);
         $('#newsletter')?.addEventListener('submit', async e => {
           e.preventDefault();
@@ -3263,6 +3323,10 @@
         });
       }
       $('#app').addEventListener('click', event => {
+        const close = event.target.closest('[data-close-overlay]'); if (close) { close.closest('.overlay').hidden = true; document.body.classList.remove('overlay-open'); return; }
+        const quick = event.target.closest('[data-quick-view]'); if (quick) { openQuickView(quick.dataset.quickView); return; }
+        const qs = event.target.closest('[data-quick-size]'); if (qs) { quickViewSize = qs.dataset.quickSize; $('#quickView').querySelectorAll('[data-quick-size]').forEach(item => item.classList.toggle('sel', item === qs)); return; }
+        const qa = event.target.closest('[data-quick-add]'); if (qa) { const p = P.find(item => String(item.id) === quickViewId); const v = p?.variants?.find(item => item.size === quickViewSize && item.available); const line = bag.find(item => String(item.id) === quickViewId && item.s === quickViewSize); if (!v || (line && line.q >= v.stock)) { notice('That size is unavailable'); return; } line ? line.q++ : bag.push({ id: quickViewId, s: quickViewSize, q: 1 }); persist(); $('#quickView').hidden = true; document.body.classList.remove('overlay-open'); render(); notice('Added to your bag'); return; }
         const button = event.target.closest('[data-save]');
         if (!button) return;
         const id = button.dataset.save;
@@ -3272,6 +3336,7 @@
         notice('Wishlist updated');
       });
 
+      window.addEventListener('keydown', event => { if (event.key === 'Escape') { document.querySelectorAll('.overlay:not([hidden])').forEach(el => el.hidden = true); document.body.classList.remove('overlay-open'); } });
       window.addEventListener('hashchange', () => {
         menu = false;
         render();
