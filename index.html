@@ -3139,24 +3139,17 @@
         );
       }
 
+      let lastOrder = null;
       function checkout() {
+        if (lastOrder) {
+          return '<main class="page"><span class="eyebrow">Order received</span><h1 class="page-title">Thank you.</h1><section class="summary" style="max-width:650px;margin:35px 0"><p>Your order has been submitted successfully.</p><div><span>Order number</span><b>' + escapeHtml(lastOrder.order_number) + '</b></div><div><span>Order status</span><b>Awaiting confirmation</b></div><div><span>Payment</span><b>Cash on Delivery</b></div><div><span>Order subtotal</span><b>' + money(lastOrder.subtotal || lastOrder.total) + '</b></div><p style="font-size:14px;color:var(--muted);line-height:1.7">Our team will contact you to confirm delivery availability and the courier charge. Your final Cash on Delivery amount will be confirmed before dispatch.</p><a class="btn" href="#/shop">Continue shopping ↗</a></section></main>';
+        }
+        const lines = bag.map(x => {
+          const product = P.find(p => String(p.id) === String(x.id));
+          return product ? '<div><span>' + escapeHtml(product.n) + ' · Size ' + escapeHtml(x.s) + ' × ' + x.q + '</span><b>' + money(product.p * x.q, product.currency) + '</b></div>' : '';
+        }).join('');
         return (
-          '<main class="page"><span class="eyebrow">The last little step</span><h1 class="page-title">Checkout.</h1><div class="shop" style="margin-top:35px"><form id="checkout" class="form"><input name="name" placeholder="Full name" required><input name="email" type="email" placeholder="Email address" required><input class="wide" name="address" placeholder="Street address" required><input name="city" placeholder="City" required><input name="postal" placeholder="Postal code" required><select class="wide" required><option value="">Select country</option><option>Bangladesh</option><option>United States</option><option>United Kingdom</option></select><button class="btn wide">Place demo order ↗</button><p class="wide" style="font-size:11px;color:var(--muted)">Demo storefront: no payment is collected and no order is transmitted.</p></form><aside class="summary" style="margin:0"><h3>Order summary</h3>' +
-          bag
-            .map(
-              x =>
-                '<div><span>' +
-                (P.find(p => String(p.id) === String(x.id))?.n || 'Product') +
-                ' × ' +
-                x.q +
-                '</span><b>' +
-                money((P.find(p => String(p.id) === String(x.id))?.p || 0) * x.q, P.find(p => String(p.id) === String(x.id))?.currency || 'BDT') +
-                '</b></div>'
-            )
-            .join('') +
-          '<div><b>Total</b><b>' +
-          money(total()) +
-          '</b></div></aside></div></main>'
+          '<main class="page"><span class="eyebrow">The last little step</span><h1 class="page-title">Checkout.</h1><p style="max-width:620px;color:var(--muted);line-height:1.7">Complete your delivery details. Paris Shoes currently accepts Cash on Delivery. Our team will confirm courier charges before dispatch.</p><div class="shop" style="margin-top:35px"><form id="checkout" class="form"><input name="name" placeholder="Full name" autocomplete="name" maxlength="120" required><input name="email" type="email" placeholder="Email address" autocomplete="email" maxlength="254" required><input name="phone" type="tel" placeholder="Bangladesh mobile number (01XXXXXXXXX)" autocomplete="tel" inputmode="tel" maxlength="16" required><input class="wide" name="address" placeholder="House, road and area" autocomplete="street-address" maxlength="500" required><input name="district" placeholder="District" maxlength="100" required><input name="city" placeholder="City / Upazila" maxlength="100" required><input name="postal_code" placeholder="Postal code (optional)" autocomplete="postal-code" maxlength="20"><textarea class="wide" name="notes" placeholder="Delivery notes (optional)" rows="3" maxlength="1000"></textarea><label class="wide" style="display:flex;gap:10px;align-items:center"><input type="radio" name="payment_method" value="cod" checked required> Cash on Delivery</label><button class="btn wide" type="submit">Place order ↗</button><p class="form-status wide" id="checkout-status" aria-live="polite"></p><p class="wide" style="font-size:12px;color:var(--muted)">No online payment is collected. Please provide a reachable phone number so our team can confirm your order.</p></form><aside class="summary" style="margin:0"><h3>Order summary</h3>' + lines + '<div><span>Subtotal</span><b>' + money(total()) + '</b></div><div><span>Delivery</span><span>Confirmed before dispatch</span></div><div><b>Cash on Delivery</b><b>Subtotal + delivery</b></div></aside></div></main>'
         );
       }
       function render() {
@@ -3352,13 +3345,52 @@
             document.querySelectorAll('[data-image-index]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
           });
         });
-        $('#checkout')?.addEventListener('submit', e => {
+        $('#checkout')?.addEventListener('submit', async e => {
           e.preventDefault();
-          if (!e.target.reportValidity()) return;
-          notice('Demo order details accepted — no payment taken');
-          bag = [];
-          persist();
-          setTimeout(() => go('home'), 1100);
+          const form = e.currentTarget;
+          if (!form.reportValidity() || !bag.length) {
+            if (!bag.length) notice('Your bag is empty');
+            return;
+          }
+          const button = form.querySelector('button[type="submit"]');
+          const status = $('#checkout-status');
+          button.disabled = true;
+          if (status) status.textContent = 'Checking stock and placing your order…';
+          try {
+            const fields = new FormData(form);
+            const customer = {
+              name: fields.get('name'), email: fields.get('email'), phone: fields.get('phone'),
+              address: fields.get('address'), district: fields.get('district'), city: fields.get('city'),
+              postal_code: fields.get('postal_code'), notes: fields.get('notes'),
+            };
+            const items = bag.map(line => {
+              const product = P.find(item => String(item.id) === String(line.id));
+              const variant = product?.variants?.find(item => String(item.size) === String(line.s));
+              if (!product || !variant) throw new Error('A selected product or size is no longer available. Please refresh your bag.');
+              return { product_id: product.id, variant_id: variant.id, quantity: line.q };
+            });
+            const orderInput = { customer, items, payment_method: 'cod' };
+            const fingerprint = JSON.stringify(orderInput);
+            let pending = null;
+            try { pending = JSON.parse(sessionStorage.getItem('parisPendingCheckout') || 'null'); } catch {}
+            if (!pending || pending.fingerprint !== fingerprint) {
+              pending = { fingerprint, idempotencyKey: crypto.randomUUID(), accessToken: crypto.randomUUID() };
+              sessionStorage.setItem('parisPendingCheckout', JSON.stringify(pending));
+            }
+            lastOrder = await storeApi.placeOrder(orderInput, {
+              idempotencyKey: pending.idempotencyKey,
+              accessToken: pending.accessToken,
+            });
+            sessionStorage.removeItem('parisPendingCheckout');
+            bag = [];
+            persist();
+            render();
+            notice('Your Paris Shoes order has been received.');
+          } catch (error) {
+            console.error('Paris Shoes order submission failed:', error);
+            if (status) status.textContent = error.message || 'We could not submit your order. Please try again.';
+            button.disabled = false;
+          }
         });
       }
       $('#app').addEventListener('click', event => {
