@@ -39,3 +39,24 @@ test('does not throw when analytics providers are not configured', () => {
   const analytics = createAnalytics({});
   assert.doesNotThrow(() => analytics.track('page_view', { page_path: '/' }));
 });
+
+test('strips personal fields from otherwise valid commerce event payloads', () => {
+  const ga = [];
+  const meta = [];
+  const analytics = createAnalytics({ gtag: (...args) => ga.push(args), fbq: (...args) => meta.push(args) });
+
+  analytics.track('purchase', {
+    transaction_id: 'PS-ORDER-1',
+    currency: 'BDT',
+    value: 2450,
+    email: 'private@example.com',
+    phone: '01700000000',
+    items: [{ item_id: 'shoe-1', quantity: 1, email: 'private@example.com' }],
+  });
+
+  assert.equal(ga[0][2].email, undefined);
+  assert.equal(ga[0][2].phone, undefined);
+  assert.equal(ga[0][2].items[0].email, undefined);
+  assert.equal(meta[0][2].email, undefined);
+  assert.equal(meta[0][2].value, 2450);
+});
