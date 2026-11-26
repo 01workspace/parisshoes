@@ -94,7 +94,7 @@ export function createStoreApi({
   const key = clean(publishableKey);
   const configured = Boolean(baseUrl && key);
 
-  async function request(table, { method = 'GET', query = '', body } = {}) {
+  async function request(table, { method = 'GET', query = '', body, prefer = 'return=minimal' } = {}) {
     if (!configured) throw new Error('The Paris Shoes catalogue service is not configured.');
     if (typeof fetchImpl !== 'function') throw new Error('This browser does not support secure network requests.');
 
@@ -105,7 +105,7 @@ export function createStoreApi({
         Authorization: `Bearer ${key}`,
         Accept: 'application/json',
         ...(body ? { 'Content-Type': 'application/json' } : {}),
-        ...(body ? { Prefer: 'return=minimal' } : {}),
+        ...(body ? { Prefer: prefer } : {}),
       },
       ...(body ? { body: JSON.stringify(body) } : {}),
     });
@@ -197,6 +197,7 @@ export function createStoreApi({
       const payload = { customer, items, payment_method: 'cod' };
       const result = await request('rpc/place_order', {
         method: 'POST',
+        prefer: 'return=representation',
         body: {
           p_payload: payload,
           p_idempotency_key: idempotencyKey,
