@@ -115,7 +115,7 @@ returns trigger
 language plpgsql
 security definer
 set search_path = ''
-as $
+as $restore$
 begin
   if new.order_status = 'cancelled'
      and old.order_status in ('pending','confirmed','processing')
@@ -129,7 +129,7 @@ begin
   end if;
   return new;
 end;
-$;
+$restore$;
 revoke all on function private.restore_order_stock_on_cancel() from public, anon, authenticated;
 
 drop trigger if exists orders_restore_stock_on_cancel on public.orders;
