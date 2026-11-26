@@ -169,9 +169,14 @@ begin
     raise exception 'Only Cash on Delivery is currently available.' using errcode = '22023';
   end if;
   v_customer := p_payload->'customer';
-  if jsonb_typeof(v_customer) <> 'object' or jsonb_typeof(p_payload->'items') <> 'array'
-     or jsonb_array_length(p_payload->'items') < 1 or jsonb_array_length(p_payload->'items') > 20 then
-    raise exception 'Please provide customer details and between 1 and 20 order items.' using errcode = '22023';
+  if jsonb_typeof(v_customer) is distinct from 'object' then
+    raise exception 'Please provide valid customer details.' using errcode = '22023';
+  end if;
+  if jsonb_typeof(p_payload->'items') is distinct from 'array' then
+    raise exception 'Please provide an order items array.' using errcode = '22023';
+  end if;
+  if jsonb_array_length(p_payload->'items') < 1 or jsonb_array_length(p_payload->'items') > 20 then
+    raise exception 'Please provide between 1 and 20 order items.' using errcode = '22023';
   end if;
 
   v_name := btrim(coalesce(v_customer->>'name',''));
