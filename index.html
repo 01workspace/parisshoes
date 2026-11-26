@@ -2768,6 +2768,10 @@
           { audience: 'kids', label: 'Kids', subtitle: 'Little steps, big adventures', fallback: '/resources/hero-shoe-5.png' },
         ];
         const categoryLinks = ['Sneakers', 'Running', 'Trail', 'Casual', 'Loafers', 'Sandals', 'Flats', 'School Shoes'];
+        const familyFeatured = ['men', 'women', 'kids']
+          .map(audience => P.find(product => product.audience === audience && product.featured))
+          .filter(Boolean);
+        const featuredProducts = [...familyFeatured, ...P.filter(product => product.featured && !familyFeatured.includes(product))].slice(0, 4);
         return (
           '<main class="home-page">' +
           '<section class="campaign-hero">' +
@@ -2787,7 +2791,7 @@
           '<div class="campaign-scroll">Scroll to discover ↓</div></section>' +
           '<div class="motion-ticker"><div class="motion-ticker-track"><span>MADE TO MOVE</span><span>MADE TO LAST</span><span>FIND YOUR PACE</span><span>MADE TO MOVE</span><span>MADE TO LAST</span><span>FIND YOUR PACE</span></div></div>' +
           '<section class="section home-featured reveal-section"><div class="head"><div><span class="eyebrow">Curated for your every day</span><h2>Meet your next<br>favourite pair.</h2></div><a class="link" href="#/shop">Shop all styles ↗</a></div><div class="products">' +
-          (P.length ? P.slice(0, 4).map(card).join('') : catalogueEmpty()) +
+          (featuredProducts.length ? featuredProducts.map(card).join('') : catalogueEmpty()) +
           '</div></section>' +
           '<section class="section home-categories reveal-section" style="padding-top:0"><div class="head"><div><span class="eyebrow">Find your fit</span><h2>Shop by family.</h2></div><a class="link" href="#/shop">Explore everything ↗</a></div><div class="categories">' +
           families.map(family => {
@@ -2803,7 +2807,7 @@
         );
       }
 
-      const SHOP_CATEGORIES = ['Sneakers', 'Running', 'Trail', 'Casual', 'Loafers', 'Sandals', 'Flats', 'Heels', 'School Shoes', 'Slip-ons'];
+            const SHOP_CATEGORIES = ['Sneakers', 'Running', 'Trail', 'Casual', 'Loafers', 'Sandals', 'Flats', 'Heels', 'School Shoes', 'Slip-ons'];
       let shopSearch = '';
 
       function selectShopProducts({ audience = 'All', category = 'All', search = '', under = false } = {}) {
