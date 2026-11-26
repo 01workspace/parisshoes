@@ -49,7 +49,7 @@ export function normalizeProduct(row) {
     n: clean(row.name),
     t: clean(row.category) || 'Shoes',
     p: Number(row.price || 0),
-    currency: clean(row.currency) || 'BDT',
+    currency: /^[A-Z]{3}$/.test(clean(row.currency).toUpperCase()) ? clean(row.currency).toUpperCase() : 'BDT',
     c: clean(row.colorway),
     tag: clean(row.badge),
     d: clean(row.description),
@@ -101,7 +101,7 @@ export function createStoreApi({
     configured,
 
     async getProducts() {
-      const query = `?select=id,slug,name,description,category,price,currency,colorway,badge,is_featured,sort_order,product_images(id,image_url,alt_text,position),product_variants(id,size,sku,stock_quantity,is_available)&is_active=eq.true&order=sort_order.asc,created_at.desc&limit=200`;
+      const query = `?select=id,slug,name,description,category,price,currency,colorway,badge,is_featured,sort_order,product_images(id,image_url,alt_text,position),product_variants(id,size,sku,stock_quantity,is_available)&is_active=eq.true&order=is_featured.desc,sort_order.asc,created_at.desc&limit=200`;
       const rows = await request('products', { query });
       if (!Array.isArray(rows)) throw new Error('The catalogue returned an unexpected response.');
       return rows.map(normalizeProduct);
