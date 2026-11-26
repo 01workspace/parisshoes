@@ -108,6 +108,35 @@ create trigger orders_audit_event
 after insert or update of order_status on public.orders
 for each row execute function private.log_order_event();
 
+alter table public.orders add column if not exists inventory_restocked_at timestamptz;
+
+create or replace function private.restore_order_stock_on_cancel()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $
+begin
+  if new.order_status = 'cancelled'
+     and old.order_status in ('pending','confirmed','processing')
+     and new.inventory_restocked_at is null then
+    update public.product_variants as pv
+    set stock_quantity = pv.stock_quantity + oi.quantity,
+        updated_at = now()
+    from public.order_items as oi
+    where oi.order_id = new.id and oi.variant_id = pv.id;
+    new.inventory_restocked_at := now();
+  end if;
+  return new;
+end;
+$;
+revoke all on function private.restore_order_stock_on_cancel() from public, anon, authenticated;
+
+drop trigger if exists orders_restore_stock_on_cancel on public.orders;
+create trigger orders_restore_stock_on_cancel
+before update of order_status on public.orders
+for each row execute function private.restore_order_stock_on_cancel();
+
 create or replace function public.place_order(p_payload jsonb, p_idempotency_key uuid, p_access_token uuid)
 returns jsonb
 language plpgsql
