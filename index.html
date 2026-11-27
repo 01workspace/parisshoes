@@ -2677,7 +2677,98 @@
         .btn, .campaign-cta, .link { font-size: 13px !important; }
       }
 
-    </style>
+    
+      /* Desktop masthead alignment repair */
+      @media (min-width: 1251px) {
+        .header {
+          grid-template-columns: minmax(0, 1fr) 224px minmax(0, 1fr) !important;
+          column-gap: clamp(16px, 2vw, 28px) !important;
+          padding-inline: clamp(28px, 5vw, 82px) !important;
+        }
+        .header .nav {
+          justify-self: end !important;
+          justify-content: flex-end !important;
+          gap: clamp(12px, 1.2vw, 18px) !important;
+          font-size: 12px !important;
+          letter-spacing: .065em !important;
+        }
+        .header .actions {
+          grid-column: 3 !important;
+          justify-self: end !important;
+          justify-content: flex-end !important;
+          width: max-content !important;
+          max-width: 100% !important;
+          margin: 0 !important;
+          gap: clamp(14px, 1.5vw, 22px) !important;
+          font-size: 12px !important;
+          letter-spacing: .065em !important;
+        }
+      }
+
+      @media (min-width: 761px) {
+        :root { --space-section: clamp(52px, 5.5vw, 78px); }
+        .campaign-hero {
+          min-height: clamp(510px, 66svh, 620px) !important;
+          padding-block: clamp(30px, 3.8vw, 52px) !important;
+          gap: clamp(18px, 2.2vw, 34px) !important;
+        }
+        .campaign-copy {
+          align-self: center !important;
+          padding: 0 !important;
+        }
+        .campaign-copy .campaign-kicker {
+          margin-bottom: clamp(16px, 1.6vw, 22px) !important;
+          font-size: 11px !important;
+          line-height: 1.45 !important;
+        }
+        .campaign-copy h1 {
+          margin: 0 !important;
+          line-height: .86 !important;
+        }
+        .campaign-copy p {
+          max-width: 440px !important;
+          margin: 17px 0 18px !important;
+          font-size: clamp(16px, 1.05vw, 18px) !important;
+          line-height: 1.58 !important;
+        }
+        .campaign-copy .campaign-cta {
+          min-height: 50px !important;
+          margin: 0 !important;
+          padding: 14px 20px !important;
+          gap: 18px !important;
+          font-size: clamp(13px, .9vw, 15px) !important;
+          line-height: 1.2 !important;
+          white-space: nowrap;
+        }
+        .campaign-copy .campaign-note {
+          position: static !important;
+          display: flex !important;
+          flex-wrap: wrap;
+          gap: 16px !important;
+          margin-top: 17px !important;
+          font-size: 11px !important;
+          line-height: 1.4 !important;
+        }
+        .campaign-art,
+        .campaign-stage {
+          height: min(540px, 58svh) !important;
+          min-height: 440px !important;
+        }
+        .campaign-stage .shoe-caption {
+          white-space: nowrap;
+          max-width: calc(100% - 28px);
+          font-size: 12px !important;
+          letter-spacing: .1em !important;
+        }
+        .campaign-stage .shoe-controls { gap: 9px !important; }
+        .head { margin-bottom: 22px !important; }
+        .intro { margin-bottom: 30px !important; }
+        .section {
+          padding-top: var(--space-section) !important;
+          padding-bottom: var(--space-section) !important;
+        }
+      }
+</style>
   </head>
   <body>
     <div id="app"></div>
