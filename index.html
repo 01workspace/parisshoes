@@ -2685,6 +2685,8 @@
       import { createStoreApi } from '/src/store-api.js';
       import { filterCatalog, getRecentlyViewed } from '/src/storefront-ux.js';
       import { initializeAnalytics } from '/src/analytics.js';
+      import { injectSpeedInsights } from '@vercel/speed-insights';
+      injectSpeedInsights();
       const storeApi = createStoreApi({
         supabaseUrl: import.meta.env.VITE_SUPABASE_URL,
         publishableKey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
