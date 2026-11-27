@@ -42,7 +42,7 @@ test('product detail keeps gallery, stock-aware sizes, add-to-bag and useful pur
   assert.ok(productSource.includes('detail-image-stage'));
   assert.ok(productSource.includes('detail-purchase'));
   assert.ok(productSource.includes('detail-assurance'));
-  assert.ok(productSource.includes('data-size='));
+  assert.ok(productSource.includes('data-size=\"'));
   assert.ok(productSource.includes('id="add"'));
   assert.ok(productSource.includes('Cash on Delivery'));
 });
