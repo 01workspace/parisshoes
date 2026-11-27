@@ -24,7 +24,8 @@ test('homepage starts with family discovery before product-led sections', () => 
 });
 
 test('homepage includes a data-driven New Arrivals section and skips it when empty', () => {
-  assert.match(homeSource, /newArrivals\s*=\s*P\.filter\([\s\S]*?NEW/i);
+  assert.ok(homeSource.includes('const newArrivals = P'));
+  assert.ok(homeSource.includes(".filter(product => String(product.tag || '').toUpperCase().includes('NEW'))"));
   assert.match(homeSource, /newArrivals\.length/);
   assert.match(homeSource, /home-new-arrivals/);
 });
